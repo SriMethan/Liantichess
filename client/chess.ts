@@ -291,6 +291,15 @@ export const VARIANTS: { [name: string]: Variant } = {
             enPassant: true,
             icon: "🏳️",
           }),
+     atomar: new Variant({
+        name: "atomar", tooltip: () => _("Pieces explode upon capture."),
+        startFen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        board: "standard8x8", piece: "standard",
+        pieceRoles: ["k", "q", "r", "b", "n", "p"],
+        enPassant: true,
+        pieceSound: "atomic",
+        chess960: true, icon: "~", icon960: "\\",
+    }),
     
     losers: new Variant({
             name: "losers", tooltip: () => _("losers Chess."),
