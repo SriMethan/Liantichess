@@ -1155,6 +1155,7 @@ table#seeks-header, table#seeks {
     box-shadow: var(--base-shadow);
     background-position: center;
     background-image: url('favicon/li.ico');
+    background-image: url('favicon/favicon.png');
     background-color: var(--bg-seek);
     background-blend-mode: overlay;
     background-size: 100% 100%;
@@ -1169,6 +1170,16 @@ table#seeks-header, table#seeks {
 #seeks thead {
     background: var(--bg-color2);
 }
+/*
+#santa {
+    display: inline-block;
+    width: 28px;
+    height: 20px;
+    background-size: contain;
+    background-position: center;
+    background-image: url('images/Santa_hat.svg');
+}
+*/
 #seeks th, #seeks td {
     white-space: nowrap;
     font-weight: inherit;

@@ -43,10 +43,17 @@ GRANDS = ("xiangqi", "manchu", "grand", "grandhouse", "shako", "janggi")
 CONSERVATIVE_CAPA_FEN = "arnbqkbnrc/pppppppppp/10/10/10/10/PPPPPPPPPP/ARNBQKBNRC w KQkq - 0 1"
 
 VARIANTS = (
+
     "atomic",
     "atomic960",
     "antiatomic",
     "antiatomic960"
+    "antichess",
+    "antichess960",
+    "losers",
+    "losers960",
+    "anti_antichess",
+    "anti_antichess960"
     # We support to import/store/analyze these variants
     # but don't support to add them to leaderboard page
     # "gothic",
@@ -73,7 +80,8 @@ VARIANT_ICONS = {
     "antiatomic960": "♔",
     "losers": "♔",
     "losers960": "♔",
-    "threecheck": "♟",
+    "anti_antichess": "♔",
+    "anti_antichess960": "♔",
     "capablanca": "P",
     "capahouse": "&",
     "seirawan": "L",
@@ -118,6 +126,9 @@ VARIANT_960_TO_PGN = {
     "atomic": "Atomic",          # to let lichess import work
     "antiatomic": "Antiatomic960",          # to let lichess import work    
     "losers": "Losers960",
+    "antichess": "Antichess",          # to let lichess import work    
+    "losers": "Losers960",
+    "anti_antichess": "Anti_antichess960",     
     "seirawan": "Seirawan960",
     # some early game is accidentally saved as 960 in mongodb
     "shogi": "Shogi",
@@ -147,6 +158,7 @@ TROPHIES = {
     "top50": (static_url("images/trophy/Fancy-Gold-Cup.png"), "Top 50!"),
     "top100": (static_url("images/trophy/Gold-Cup.png"), "Top 100!"),
     "shield": (static_url("images/trophy/shield-gold.png"), "Shield"),
+    "acwc21": (static_url("images/trophy/acwc21.png"), "World Champion 2021"),
 }
 
 
