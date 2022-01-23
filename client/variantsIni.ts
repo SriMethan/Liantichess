@@ -16,6 +16,7 @@ extinctionValue = win
 promotionPieceTypes = nbrqk
 commoner = k
 extinctionPieceTypes = *
+extinctionPseudoRoyal = false
 castling = false
 
 # Hybrid of antichess and zh. Antichess is the base variant.
