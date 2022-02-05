@@ -422,6 +422,22 @@ export const VARIANTS: { [name: string]: Variant } = {
         enPassant: true,
         chess960: true, icon: "♔", icon960: "♔",
     }),
+    
+    antiminishogi: new Variant({
+        name: "antiminishogi", tooltip: () => _("Antichess + minishogi"),
+        startFen: "rbsgk/4p/5/P4/KGSBR[-] w 0 1",
+        board: "shogi5x5", piece: "shogi",
+        firstColor: "Black", secondColor: "White",
+        pieceRoles: ["k", "g", "r", "b", "s", "p"],
+        pocketRoles: ["p", "s", "g", "b", "r"],
+        promotion: "shogi",
+        promoteablePieces: ["p", "s", "r", "b"],
+        isMandatoryPromotion: distanceBased({ p: 1 }, 5),
+        timeControl: "byoyomi",
+        pieceSound: "shogi",
+        drop: true,
+        icon: "6",
+    }),
 
     cambodian: new Variant({
         name: "cambodian", displayName: "ouk chatrang", tooltip: () => _("Cambodian Chess. Makruk with a few additional opening abilities."),
@@ -836,7 +852,7 @@ export const enabledVariants = variants.filter(v => !disabledVariants.includes(v
 const variantGroups: { [ key: string ]: { variants: string[] } } = {
     standard: { variants: [ "antichess", "losers", "anti_antichess", "antiatomic", "antihouse", "antipawns", "coffeehouse", "coffeehill", "atomic_giveaway_hill", "coffee_3check", "coffeerace"] },
     //sea:      { variants: [ "makruk", "makpong", "cambodian", "sittuyin", "asean" ] },
-    //shogi:    { variants: [ "antishogi" ] },
+    shogi:    { variants: [ "antishogi", "Antiminishogi" ] },
     //xiangqi:  { variants: [ "xiangqi", "manchu", "janggi", "minixiangqi" ] },
     //fairy:    { variants: [ "capablanca", "capahouse", "seirawan", "shouse", "grand", "grandhouse", "shako", "shogun", "hoppelpoppel" ] },
     //army:     { variants: [ "orda", "synochess", "shinobi", "empire", "ordamirror" ] },
@@ -844,9 +860,9 @@ const variantGroups: { [ key: string ]: { variants: string[] } } = {
 
 function variantGroupLabel(group: string): string {
     const groups: {[index: string]: string} = {
-        //standard: _("Chess Variants"),
+        standard: _("Chess Variants"),
         //sea: _("Makruk Variants"),
-        //shogi: _("Shogi Variants"),
+        shogi: _("Shogi Variants"),
         //xiangqi: _("Xiangqi Variants"),
         //fairy: _("Fairy Piece Variants"),
         //army: _("New Army Variants"),
