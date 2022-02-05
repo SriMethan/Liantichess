@@ -850,9 +850,9 @@ const disabledVariants = [ "gothic", "gothhouse", "embassy" ];
 export const enabledVariants = variants.filter(v => !disabledVariants.includes(v));
 
 const variantGroups: { [ key: string ]: { variants: string[] } } = {
-    standard: { variants: [ "antichess", "losers", "anti_antichess", "antiatomic", "antihouse", "antipawns", "coffeehouse", "coffeehill", "atomic_giveaway_hill", "coffee_3check", "coffeerace"] },
+    standard: { variants: [ "antichess", "losers", "anti_antichess", "antiatomic", "antihouse", "antipawns", "coffeehouse", "coffeehill", "atomic_giveaway_hill", "coffee_3check", "coffeerace", "antishogi", "antiminishogi"] },
     //sea:      { variants: [ "makruk", "makpong", "cambodian", "sittuyin", "asean" ] },
-    shogi:    { variants: [ "antishogi", "antiminishogi" ] },
+    //shogi:    { variants: [ "antishogi", "antiminishogi" ] },
     //xiangqi:  { variants: [ "xiangqi", "manchu", "janggi", "minixiangqi" ] },
     //fairy:    { variants: [ "capablanca", "capahouse", "seirawan", "shouse", "grand", "grandhouse", "shako", "shogun", "hoppelpoppel" ] },
     //army:     { variants: [ "orda", "synochess", "shinobi", "empire", "ordamirror" ] },
@@ -862,7 +862,7 @@ function variantGroupLabel(group: string): string {
     const groups: {[index: string]: string} = {
         standard: _("Chess Variants"),
         //sea: _("Makruk Variants"),
-        shogi: _("Shogi Variants"),
+        //shogi: _("Shogi Variants"),
         //xiangqi: _("Xiangqi Variants"),
         //fairy: _("Fairy Piece Variants"),
         //army: _("New Army Variants"),
@@ -939,7 +939,7 @@ export function validFen(variant: Variant, fen: string): boolean {
     // Split board part and pocket part
     const leftBracketPos = placement.indexOf('[');
     const board = (leftBracketPos === -1) ? placement : placement.slice(0, leftBracketPos);
-    const pocket = placement.slice(leftBracketPos);
+    //const pocket = placement.slice(leftBracketPos);
     //const startLeftBracketPos = start.indexOf('[');
     //const startBoard = startPlacement.slice(0, startLeftBracketPos);
     //const startPocket = startPlacement.slice(startLeftBracketPos);
