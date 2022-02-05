@@ -62,7 +62,9 @@ VARIANTS = (
     "coffeehill",
     "coffeehill960",
     "atomic_giveaway_hill",
-    "atomic_giveaway_hill960"  
+    "atomic_giveaway_hill960",
+    "antiminishogi",
+    "antishogi",
     # We support to import/store/analyze these variants
     # but don't support to add them to leaderboard page
     # "gothic",
@@ -77,7 +79,7 @@ VARIANT_ICONS = {
     "makruk": "Q",
     "makpong": "O",
     "sittuyin": ":",
-    "shogi": "K",
+    "antiminishogi": "K",
     "janggi": "=",
     "xiangqi": "|",
     "chess": "M",
@@ -163,6 +165,8 @@ VARIANT_960_TO_PGN = {
     "coffeehill": "Coffeehill960",
     "atomic_giveaway_hill": "Atomic_giveaway_hill960",            
     "seirawan": "Seirawan960",
+    "antishogi": "Antishogi",
+    "antiminishogi": "Antiminishogi",
     # some early game is accidentally saved as 960 in mongodb
     "shogi": "Shogi",
     "sittuyin": "Sittuyin",
@@ -176,7 +180,7 @@ CATEGORIES = {
     "fairy": ("capablanca", "capablanca960", "capahouse", "capahouse960", "seirawan", "seirawan960", "shouse", "grand", "grandhouse", "shako", "shogun", "hoppelpoppel"),
     "army": ("synochess", "shinobi", "empire", "chak"),
     "makruk": ("makruk", "makpong", "cambodian", "sittuyin", "asean"),
-    "shogi": ("shogi", "minishogi", "kyotoshogi", "dobutsu", "gorogoro", "torishogi", "antishogi"),
+    "shogi": ("shogi", "minishogi", "kyotoshogi", "dobutsu", "gorogoro", "torishogi", "antishogi", "antiminishogi"),
     "xiangqi": ("xiangqi", "manchu", "janggi", "minixiangqi"),
 }
 
@@ -218,7 +222,9 @@ TROPHY_KIND = (
     "coffeehill",
     "coffeehill960",
     "atomic_giveaway_hill",
-    "atomic_giveaway_hill960"
+    "atomic_giveaway_hill960",
+    "antishogi",
+    "antiminishogi"
 )
 
 
