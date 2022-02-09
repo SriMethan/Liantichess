@@ -422,6 +422,17 @@ export const VARIANTS: { [name: string]: Variant } = {
         enPassant: true,
         chess960: true, icon: "♔", icon960: "♔",
     }),
+    
+    antimakruk: new Variant({
+        name: "antimakruk", tooltip: () => _("Thai Chess. A game closely resembling the original Chaturanga. Similar to Chess but with a different queen and bishop."),
+        startFen: "rnsmksnr/8/pppppppp/8/8/PPPPPPPP/8/RNSKMSNR w - - 0 1",
+        board: "makruk8x8", piece: "makruk",
+        pieceRoles: ["k", "s", "m", "n", "r", "p", "m~" as cg.PieceLetter],
+        promotionOrder: ["m"],
+        counting: "makruk",
+        showPromoted: true,
+        icon: "Q",
+    }),
 
     cambodian: new Variant({
         name: "cambodian", displayName: "ouk chatrang", tooltip: () => _("Cambodian Chess. Makruk with a few additional opening abilities."),
@@ -851,7 +862,7 @@ export const enabledVariants = variants.filter(v => !disabledVariants.includes(v
 
 const variantGroups: { [ key: string ]: { variants: string[] } } = {
     standard: { variants: [ "antichess", "losers", "anti_antichess", "antiatomic", "antihouse", "antipawns", "coffeehouse", "coffeehill", "atomic_giveaway_hill", "coffee_3check", "coffeerace", "antiplacement", "antihoppelpoppel"] },
-    //sea:      { variants: [ "makruk", "makpong", "cambodian", "sittuyin", "asean" ] },
+    sea:      { variants: [ "antimakruk"] },
     shogi:    { variants: [ "antiminishogi" ] },
     //xiangqi:  { variants: [ "xiangqi", "manchu", "janggi", "minixiangqi" ] },
     //fairy:    { variants: [ "capablanca", "capahouse", "seirawan", "shouse", "grand", "grandhouse", "shako", "shogun", "hoppelpoppel" ] },
@@ -860,9 +871,9 @@ const variantGroups: { [ key: string ]: { variants: string[] } } = {
 
 function variantGroupLabel(group: string): string {
     const groups: {[index: string]: string} = {
-        //standard: _("Chess Variants"),
-        //sea: _("Makruk Variants"),
-        //shogi: _("Shogi Variants"),
+        standard: _("Chess Variants"),
+        sea: _("Makruk Variants"),
+        shogi: _("Shogi Variants"),
         //xiangqi: _("Xiangqi Variants"),
         //fairy: _("Fairy Piece Variants"),
         //army: _("New Army Variants"),
