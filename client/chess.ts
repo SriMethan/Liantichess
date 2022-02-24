@@ -286,7 +286,113 @@ export const VARIANTS: { [name: string]: Variant } = {
         pocketRoles: ["n", "b", "r", "q", "k"],
         enPassant: true,
         icon: "♔",
+    }),
+
+    antigrandhouse: new Variant({
+        name: "antigrandhouse", tooltip: () => _("Grand Chess with Crazyhouse drop rules."),
+        startFen: "r8r/1nbqkcabn1/pppppppppp/10/10/10/10/PPPPPPPPPP/1NBQKCABN1/R8R[] w - - 0 1",
+        board: "grand10x10", piece: "capa",
+        pieceRoles: ["k", "q", "c", "a", "r", "b", "n", "p"],
+        pocketRoles: ["p", "n", "b", "r", "a", "c", "q"],
+        isMandatoryPromotion: distanceBased({ p: 1 }, 10),
+        enPassant: true, drop: true,
+        icon: "♔",
     }),    
+
+    antichak: new Variant({
+        name: "antichak", tooltip: () => _("https://www.chessvariants.com/rules/chak"),
+        startFen: "rvsqkjsvr/4o4/p1p1p1p1p/9/9/9/P1P1P1P1P/4O4/RVSJKQSVR w - - 0 1",
+        board: "chak9x9", piece: "chak",
+        firstColor: "White", secondColor: "Green",
+        pieceRoles: ["r", "v", "s", "q", "k", "j", "o", "p"],
+        promotion: "shogi",
+        promoteablePieces: ["p", "k"],
+        icon: "♔",
+    }),    
+
+    anticapablanca: new Variant({
+        name: "anticapablanca", displayName: "Coffecapablanca", tooltip: () => _("Play with the hybrid pieces, archbishop (B+N) and chancellor (R+N), on a 10x8 board."),
+        startFen: "rnabqkbcnr/pppppppppp/10/10/10/10/PPPPPPPPPP/RNABQKBCNR w KQkq - 0 1",
+        board: "standard10x8", piece: "capa",
+        pieceRoles: ["k", "q", "c", "a", "r", "b", "n", "p"],
+        enPassant: true,
+        alternateStart: {
+            '': '',
+            'Bird': 'rnbcqkabnr/pppppppppp/10/10/10/10/PPPPPPPPPP/RNBCQKABNR w KQkq - 0 1',
+            'Carrera': 'rcnbqkbnar/pppppppppp/10/10/10/10/PPPPPPPPPP/RCNBQKBNAR w KQkq - 0 1',
+            'Gothic': 'rnbqckabnr/pppppppppp/10/10/10/10/PPPPPPPPPP/RNBQCKABNR w KQkq - 0 1',
+            'Embassy': 'rnbqkcabnr/pppppppppp/10/10/10/10/PPPPPPPPPP/RNBQKCABNR w KQkq - 0 1',
+            'Conservative': 'arnbqkbnrc/pppppppppp/10/10/10/10/PPPPPPPPPP/ARNBQKBNRC w KQkq - 0 1'
+        },
+        chess960: true, icon: "♔", icon960: "♔",
+    }),    
+    
+    antishogun: new Variant({
+        name: "antishogun", tooltip: () => _("Pieces promote and can be dropped, similar to Shogi."),
+        startFen: "rnb+fkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB+FKBNR w KQkq - 0 1",
+        board: "shogun8x8", piece: "shogun",
+        pieceRoles: ["k", "f", "r", "b", "n", "p"],
+        pocketRoles: ["p", "n", "b", "r", "f"],
+        promotion: "shogi",
+        promoteablePieces: ["p", "f", "r", "b", "n"],
+        isMandatoryPromotion: distanceBased({ p: 1 }, 8),
+        timeControl: "byoyomi",
+        enPassant: true, drop: true,
+        icon: "♔",
+    }),
+    
+    antiorda: new Variant({
+        name: "antiorda", tooltip: () => _("Asymmetric variant where one army has pieces that move like knights but capture differently."),
+        startFen: "lhaykahl/8/pppppppp/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 0 1",
+        board: "standard8x8", piece: "orda",
+        firstColor: "White", secondColor: "Gold",
+        pieceRoles: ["k", "q", "r", "b", "n", "p", "h"],
+        pieceRoles2: ["k", "y", "l", "a", "h", "p", "q"],
+        promotionOrder: ["q", "h"],
+        enPassant: true,
+        //materialDifference: false,
+        icon: "♔",
+    }),
+    
+    antisynochess: new Variant({
+        name: "antisynochess", tooltip: () => _("Asymmetric East vs. West variant which pits the western Chess army against a Xiangqi and Janggi-styled army."),
+        startFen: "rneakenr/8/1c4c1/1ss2ss1/8/8/PPPPPPPP/RNBQKBNR[ss] w KQ - 0 1",
+        board: "standard8x8", piece: "synochess",
+        firstColor: "White", secondColor: "Red",
+        pieceRoles: ["k", "q", "r", "b", "n", "p"],
+        pieceRoles2: ["k", "a", "c", "r", "e", "n", "s"],
+        pocketRoles: [], pocketRoles2: ["s"],
+        materialDifference: false,
+        icon: "♚",
+    }),
+    
+    antiempire: new Variant({
+        name: "antiempire", tooltip: () => _("Asymmetric variant where one army has pieces that move like queens but capture as usual."),
+        startFen: "rnbqkbnr/pppppppp/8/8/8/PPPSSPPP/8/TECDKCET w kq - 0 1",
+        board: "standard8x8", piece: "empire",
+        firstColor: "Gold", secondColor: "Black",
+        pieceRoles: ["k", "d", "t", "c", "e", "p", "s", "q"],
+        pieceRoles2: ["k", "q", "r", "b", "n", "p"],
+        enPassant: true,
+        //materialDifference: false,
+        icon: "♚",
+    }),    
+
+    antishinobi: new Variant({
+        name: "antishinobi", tooltip: () => _("Asymmetric variant which pits the western Chess army against a drop-based, Shogi-styled army."),
+        startFen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/LH1CK1HL[LHMMDJ] w kq - 0 1",
+        board: "standard8x8", piece: "shinobi",
+        firstColor: "Pink", secondColor: "Black",
+        pieceRoles: ["k", "d", "j", "c", "l", "h", "m", "p"],
+        pieceRoles2: ["k", "q", "r", "b", "n", "p"],
+        pocketRoles: ["l", "h", "m", "d", "j"],
+        pocketRoles2: [],
+        promotion: "shogi",
+        promoteablePieces: ["p", "l", "h", "m"],
+        enPassant: true,
+        //materialDifference: false,
+        icon: "♚",
+    }),
 
     antihoppelpoppel: new Variant({
         name: "antihoppelpoppel", displayName: "antihoppel-poppel", tooltip: () => _("Knights capture as bishops; bishops  capture as knights."),
@@ -488,6 +594,22 @@ export const VARIANTS: { [name: string]: Variant } = {
             '10-Piece HC': '4k4/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL[-] b 0 1'
         },
         icon: "K",
+    }),
+
+    antiminishogi: new Variant({
+        name: "antiminishogi", tooltip: () => _("5x5 Shogi for more compact and faster games. There are no knights or lances."),
+        startFen: "rbsgk/4p/5/P4/KGSBR[-] w 0 1",
+        board: "shogi5x5", piece: "shogi",
+        firstColor: "Black", secondColor: "White",
+        pieceRoles: ["k", "g", "r", "b", "s", "p"],
+        pocketRoles: ["p", "s", "g", "b", "r"],
+        promotion: "shogi",
+        promoteablePieces: ["p", "s", "r", "b"],
+        isMandatoryPromotion: distanceBased({ p: 1 }, 5),
+        timeControl: "byoyomi",
+        pieceSound: "shogi",
+        drop: true,
+        icon: "♔",
     }),
 
     minishogi: new Variant({
@@ -873,22 +995,22 @@ const disabledVariants = [ "gothic", "gothhouse", "embassy", "gorogoro" ];
 export const enabledVariants = variants.filter(v => !disabledVariants.includes(v));
 
 const variantGroups: { [ key: string ]: { variants: string[] } } = {
-    standard: { variants: [ "antichess", "losers", "anti_antichess", "antiatomic", "antihouse", "antipawns", "coffeehouse", "coffeehill", "atomic_giveaway_hill", "coffee_3check", "coffeerace"] },
+    standard: { variants: [ "antichess", "losers", "anti_antichess", "antiatomic", "antihouse", "antipawns", "coffeehouse", "coffeehill", "atomic_giveaway_hill", "coffee_3check", "coffeerace", "antiplacement"] },
     //sea:      { variants: [ "makruk", "makpong", "cambodian", "sittuyin", "asean" ] },
-    //shogi:    { variants: [ "antishogi" ] },
+    //shogi:    { variants: [ "antiminishogi" ] },
     //xiangqi:  { variants: [ "xiangqi", "manchu", "janggi", "minixiangqi" ] },
-    //fairy:    { variants: [ "capablanca", "capahouse", "seirawan", "shouse", "grand", "grandhouse", "shako", "shogun", "hoppelpoppel" ] },
-    //army:     { variants: [ "orda", "synochess", "shinobi", "empire", "ordamirror" ] },
+    fairy:    { variants:  ["antihoppelpoppel", "antishogun", "anticapablanca", "antigrandhouse"] },
+    army:     { variants: [ "antichak", "antiorda", "antisynochess", "antiempire", "antishinobi"] },
 };
 
 function variantGroupLabel(group: string): string {
     const groups: {[index: string]: string} = {
-        //standard: _("Chess Variants"),
+        standard: _("Chess Variants"),
         //sea: _("Makruk Variants"),
         //shogi: _("Shogi Variants"),
         //xiangqi: _("Xiangqi Variants"),
-        //fairy: _("Fairy Piece Variants"),
-        //army: _("New Army Variants"),
+        fairy: _("Fairy Piece Variants"),
+        army: _("New Army Variants"),
     }
     return groups[group];
 }
@@ -1209,6 +1331,7 @@ export function notation(variant: Variant): cg.Notation {
             break;
         case 'shogi':
         case 'minishogi':
+        case 'antiminishogi':    
         case 'kyotoshogi':
         case 'dobutsu':
         case 'gorogoro':
