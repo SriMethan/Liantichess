@@ -1,8 +1,5 @@
 from settings import static_url
 
-SCHEDULE_MAX_DAYS = 7
-TOURNAMENT_SPOTLIGHTS_MAX = 4
-
 # Max number of lobby chat lines (deque limit)
 MAX_CHAT_LINES = 100
 
@@ -22,24 +19,7 @@ DAILY, WEEKLY, MONTHLY, YEARLY, MARATHON, SHIELD = "d", "w", "m", "y", "a", "s"
 ARENA, RR, SWISS = range(3)
 
 # translations
-LANGUAGES = [
-    "de",
-    "en",
-    "es",
-    "gl_ES",
-    "fr",
-    "hu",
-    "it",
-    "ja",
-    "ko",
-    "nl",
-    "pl",
-    "pt",
-    "ru",
-    "th",
-    "tr",
-    "zh",
-]
+LANGUAGES = ["de", "en", "es", "gl_ES", "fr", "hu", "it", "ja", "ko", "nl", "pl", "pt", "ru", "th", "tr", "zh"]
 
 # fishnet work types
 MOVE, ANALYSIS = 0, 1
@@ -48,24 +28,8 @@ MOVE, ANALYSIS = 0, 1
 CASUAL, RATED, IMPORTED = 0, 1, 2
 
 # game status
-(
-    CREATED,
-    STARTED,
-    ABORTED,
-    MATE,
-    RESIGN,
-    STALEMATE,
-    TIMEOUT,
-    DRAW,
-    FLAG,
-    ABANDONE,
-    CHEAT,
-    BYEGAME,
-    INVALIDMOVE,
-    UNKNOWNFINISH,
-    VARIANTEND,
-    CLAIM,
-) = range(-2, 14)
+CREATED, STARTED, ABORTED, MATE, RESIGN, STALEMATE, TIMEOUT, DRAW, FLAG, \
+    ABANDONE, CHEAT, BYEGAME, INVALIDMOVE, UNKNOWNFINISH, VARIANTEND, CLAIM = range(-2, 14)
 
 LOSERS = {
     "abandone": ABANDONE,
@@ -79,54 +43,44 @@ GRANDS = ("xiangqi", "manchu", "grand", "grandhouse", "shako", "janggi")
 CONSERVATIVE_CAPA_FEN = "arnbqkbnrc/pppppppppp/10/10/10/10/PPPPPPPPPP/ARNBQKBNRC w KQkq - 0 1"
 
 VARIANTS = (
-    "chess",
-    "chess960",
-    "crazyhouse",
-    "crazyhouse960",
-    "placement",
-    "atomic",
-    "atomic960",
-    "makruk",
-    "makpong",
-    "cambodian",
-    "sittuyin",
-    "asean",
-    "shogi",
-    "minishogi",
-    "kyotoshogi",
-    "dobutsu",
-    # Gorogoro is superseded by Gorogoro Plus
-    # "gorogoro",
-    "gorogoroplus",
-    "torishogi",
-    "xiangqi",
-    "manchu",
-    "janggi",
-    "minixiangqi",
-    "capablanca",
-    "capablanca960",
-    "capahouse",
-    "capahouse960",
+    "antichess",
+    "antichess960",
+    "losers",
+    "losers960",
+    "anti_antichess",
+    "anti_antichess960",
+    "antiatomic",
+    "antiatomic960",
+    "antihouse",
+    "antihouse960",
+    "antipawns",
+    "coffee_3check",
+    "coffee_3check960",
+    "coffeerace",
+    "coffeehouse",
+    "coffeehouse960",
+    "coffeehill",
+    "coffeehill960",
+    "antiplacement",
+    "antihoppelpoppel",
+#    "antishogun",
+    "anticapablanca",
+    "antichak",
+    "antisynochess",
+    "antiempire",
+    "antiorda",
+    "antishinobi",
+    "antigrandhouse",
+    "atomic_giveaway_hill",
+    "atomic_giveaway_hill960"  
     # We support to import/store/analyze these variants
     # but don't support to add them to leaderboard page
     # "gothic",
     # "gothhouse",
     # "embassy",
-    "seirawan",
-    "seirawan960",
-    "shouse",
-    "grand",
-    "grandhouse",
-    "shogun",
-    "shako",
-    "hoppelpoppel",
-    "orda",
-    "synochess",
-    "shinobi",
-    "empire",
-    "ordamirror",
-    "chak",
-    "chennis",
+#    "orda",
+#    "ordamirror",
+    # "chak"
 )
 
 VARIANT_ICONS = {
@@ -139,6 +93,41 @@ VARIANT_ICONS = {
     "chess": "M",
     "crazyhouse": "+",
     "placement": "S",
+    "kingofthehill": "🏳️",
+    "racingkings": "♔",
+    "antichess": "♔",
+    "antichess960": "♔",
+    "losers": "♔",
+    "losers960": "♔",
+    "antiminishogi": "♔",
+    "coffeerace": "♔",
+    "antiorda": "♔",
+    "coffee_3check": "♔",
+    "coffee_3check960": "♔",    
+    "anti_antichess": "♔",
+    "anti_antichess960": "♔",
+    "antiatomic": "♔",
+    "antiatomic960": "♔",
+    "antishogi": "♔",
+    "antiempire": "♔",
+    "antishinobi": "♔",
+    "antihouse": "♔",
+    "antihouse960": "♔",
+    "antishogun": "♔",
+    "anticapablanca": "♔",
+    "anticapablanca960": "♔",
+    "antipawns": "♔",
+    "antisynochess": "♔",
+    "coffeehouse": "♔",
+    "coffeehouse960": "♔",
+    "coffeehill": "♔",
+    "coffeehill960": "♔",
+    "antiplacement": "♔",
+    "antihoppelpoppel": "♔",
+    "antichak": "♔",
+    "antigrandhouse": "♔",
+    "atomic_giveaway_hill": "♔",
+    "atomic_giveaway_hill960": "♔",       
     "capablanca": "P",
     "capahouse": "&",
     "seirawan": "L",
@@ -152,7 +141,6 @@ VARIANT_ICONS = {
     "minishogi": "6",
     "dobutsu": "8",
     "gorogoro": "🐱",
-    "gorogoroplus": "🐱",
     "torishogi": "🐦",
     "cambodian": "!",
     "shako": "9",
@@ -163,7 +151,7 @@ VARIANT_ICONS = {
     "crazyhouse960": "%",
     "kyotoshogi": ")",
     "shogun": "-",
-    "orda": "R",
+#    "orda": "R",
     "synochess": "_",
     "hoppelpoppel": "`",
     "manchu": "{",
@@ -171,10 +159,9 @@ VARIANT_ICONS = {
     "atomic960": "\\",
     "shinobi": "🐢",
     "empire": "♚",
-    "ordamirror": "◩",
+#    "ordamirror": "◩",
     "asean": "♻",
     "chak": "🐬",
-    "chennis": "🎾",
 }
 
 VARIANT_960_TO_PGN = {
@@ -182,7 +169,20 @@ VARIANT_960_TO_PGN = {
     "capablanca": "Caparandom",
     "capahouse": "Capahouse960",
     "crazyhouse": "Crazyhouse",  # to let lichess import work
-    "atomic": "Atomic",  # to let lichess import work
+    "atomic": "Atomic",          # to let lichess import work
+    "antichess": "Antichess",          # to let lichess import work    
+    "losers": "Losers960",
+    "coffee_3check": "Coffee_3check960",
+    "coffeerace": "Coffeerace960",
+    "antiplacement": "Antiplacement960",
+    "anti_antichess": "Anti_antichess960",
+    "antiatomic": "Antiatomic960",
+    "antihouse": "Antihouse960",
+    "antipawns": "Antipawns960",
+    "coffeehouse": "Coffeehouse960",
+    "coffeehill": "Coffeehill960",
+    "anticapablanca": "Anticapablanca960",
+    "atomic_giveaway_hill": "Atomic_giveaway_hill960",            
     "seirawan": "Seirawan960",
     # some early game is accidentally saved as 960 in mongodb
     "shogi": "Shogi",
@@ -193,39 +193,11 @@ VARIANT_960_TO_PGN = {
 }
 
 CATEGORIES = {
-    "chess": (
-        "chess",
-        "chess960",
-        "crazyhouse",
-        "crazyhouse960",
-        "placement",
-        "atomic",
-        "atomic960",
-    ),
-    "fairy": (
-        "capablanca",
-        "capablanca960",
-        "capahouse",
-        "capahouse960",
-        "seirawan",
-        "seirawan960",
-        "shouse",
-        "grand",
-        "grandhouse",
-        "shako",
-        "shogun",
-        "hoppelpoppel",
-    ),
-    "army": ("orda", "synochess", "shinobi", "empire", "ordamirror", "chak", "chennis"),
+    "chess": ("chess", "chess960", "crazyhouse", "crazyhouse960", "placement", "atomic", "atomic960", "antichess", "antichess960", "antiatomic", "antiatomic", "coffeehouse", "coffeehouse960", "antihoppelpoppel", "anticapablanca", "antichak", "antigrandhouse"),
+    "fairy": ("anticapablanca", "anticapablanca960", "capahouse", "capahouse960", "seirawan", "seirawan960", "shouse", "grand", "grandhouse", "shako", "shogun", "hoppelpoppel"),
+    "army": ("synochess", "shinobi", "empire", "chak"),
     "makruk": ("makruk", "makpong", "cambodian", "sittuyin", "asean"),
-    "shogi": (
-        "shogi",
-        "minishogi",
-        "kyotoshogi",
-        "dobutsu",
-        "gorogoroplus",
-        "torishogi",
-    ),
+    "shogi": ("shogi", "minishogi", "kyotoshogi", "dobutsu", "gorogoro", "torishogi", "antishogi", "antiminishogi"),
     "xiangqi": ("xiangqi", "manchu", "janggi", "minixiangqi"),
 }
 
@@ -240,9 +212,38 @@ TROPHIES = {
     "top50": (static_url("images/trophy/Fancy-Gold-Cup.png"), "Top 50!"),
     "top100": (static_url("images/trophy/Gold-Cup.png"), "Top 100!"),
     "shield": (static_url("images/trophy/shield-gold.png"), "Shield"),
-    # an example custom trophy from lichess
-    "acwc19": (static_url("images/trophy/acwc19.png"), "World Champion 2019"),
+    "acwc21": (static_url("images/trophy/acwc21.png"), "2021 Champion"),
+    "developer": (static_url("images/trophy/developer.png"), "Developer"),
+    "moderator": (static_url("images/trophy/moderator.png"), "Moderator")    
 }
+
+TROPHY_KIND = (
+    "liantichess",
+    "LAWC", 
+    "antichess",
+    "antichess960",
+    "losers",
+    "losers960",
+    "anti_antichess",
+    "anti_antichess960",
+    "antiatomic",
+    "antiatomic960",
+    "antihouse",
+    "antihouse960",
+    "antipawns",
+    "coffee_3check",
+    "coffee_3check960",
+    "coffeerace",
+    "coffeehouse",
+    "coffeehouse960",
+    "coffeehill",
+    "coffeehill960",
+    "antiplacement",
+    "antiminishogi",
+    "antihoppelpoppel",
+    "atomic_giveaway_hill",
+    "atomic_giveaway_hill960"
+)
 
 
 def variant_display_name(variant):
@@ -254,10 +255,8 @@ def variant_display_name(variant):
         return "S-HOUSE"
     elif variant == "cambodian":
         return "OUK CHATRANG"
-    elif variant == "ordamirror":
-        return "ORDA MIRROR"
-    elif variant == "gorogoroplus":
-        return "GOROGORO+"
+#    elif variant == "ordamirror":
+ #       return "ORDA MIRROR"
     elif variant == "kyotoshogi":
         return "KYOTO SHOGI"
     elif variant == "torishogi":

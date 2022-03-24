@@ -2,23 +2,8 @@ import collections
 import logging
 from datetime import datetime, timezone
 
-from broadcast import discord_message
 from compress import C2V, V2C, C2R
-from const import (
-    CASUAL,
-    RATED,
-    ARENA,
-    RR,
-    SWISS,
-    variant_display_name,
-    T_STARTED,
-    T_CREATED,
-    T_FINISHED,
-    T_ARCHIVED,
-    SHIELD,
-    VARIANTS,
-    MAX_CHAT_LINES,
-)
+from const import CASUAL, RATED, ARENA, RR, SWISS, variant_display_name, T_STARTED, T_CREATED, T_FINISHED, T_ARCHIVED, SHIELD, VARIANTS, MAX_CHAT_LINES
 from newid import new_id
 from user import User
 
@@ -26,13 +11,13 @@ from tournament import GameData, PlayerData, SCORE_SHIFT
 from arena import ArenaTournament
 from rr import RRTournament
 from swiss import SwissTournament
+from settings import ADMINS
+from misc import time_control_str
 
 log = logging.getLogger(__name__)
 
 
 async def create_or_update_tournament(app, username, form, tournament=None):
-    """Manual tournament creation from https://www.pychess.org/tournaments/new form input values"""
-
     variant = form["variant"]
     variant960 = variant.endswith("960")
     variant_name = variant[:-3] if variant960 else variant
@@ -43,19 +28,22 @@ async def create_or_update_tournament(app, username, form, tournament=None):
     frequency = SHIELD if form["shield"] == "true" else ""
 
     if form["startDate"]:
-        start_date = datetime.fromisoformat(form["startDate"].rstrip("Z")).replace(
-            tzinfo=timezone.utc
-        )
+        start_date = datetime.fromisoformat(form["startDate"].rstrip("Z")).replace(tzinfo=timezone.utc)
     else:
         start_date = None
 
     name = form["name"]
     # Create meningful tournament name in case we forget to change it :)
-    if name == "":
-        name = "%s Arena" % variant_display_name(variant).title()
+    if name in ADMINS:
+        name = "%s %s Arena" % (variant_display_name(variant).title(), time_control_str(base, inc, bp))
 
     if frequency == SHIELD:
         name = "%s Shield Arena" % variant_display_name(variant).title()
+        description = """
+This Shield trophy is unique.
+The winner keeps it for one month,
+then must defend it during the next %s Shield tournament!
+""" % variant_display_name(variant).title()
     else:
         description = form["description"]
 
@@ -79,16 +67,22 @@ async def create_or_update_tournament(app, username, form, tournament=None):
     if tournament is None:
         tournament = await new_tournament(app, data)
     else:
-        # We want to update some data of the tournament created by new_tournament() before.
+        # We want to update some data of the tournament created by new_tournament() befor
         # upsert=True will do this update at the end of upsert_tournament_to_db()
         await upsert_tournament_to_db(tournament, app)
 
-    await broadcast_tournament_creation(app, tournament)
-
-
-async def broadcast_tournament_creation(app, tournament):
     await tournament.broadcast_spotlight()
-    await discord_message(app, "create_tournament", tournament.create_discord_msg)
+
+    # Send msg to discord-relay BOT
+    try:
+        lobby_sockets = app["lobbysockets"]
+        msg = tournament.discord_msg
+        for dr_ws in lobby_sockets["Discord-Relay"]:
+            await dr_ws.send_json({"type": "create_tournament", "message": msg})
+            break
+    except (KeyError, ConnectionResetError):
+        # BOT disconnected
+        log.error("--- Discord-Relay disconnected!")
 
 
 async def new_tournament(app, data):
@@ -105,8 +99,7 @@ async def new_tournament(app, data):
         tournament_class = RRTournament
 
     tournament = tournament_class(
-        app,
-        tid,
+        app, tid,
         variant=data["variant"],
         base=data["base"],
         inc=data["inc"],
@@ -121,10 +114,10 @@ async def new_tournament(app, data):
         starts_at=data.get("startDate"),
         frequency=data.get("frequency", ""),
         name=data["name"],
-        description=data.get("description", ""),
+        description=data["description"],
         created_at=data.get("createdAt"),
         status=data.get("status"),
-        with_clock=data.get("with_clock", True),
+        with_clock=data.get("with_clock", True)
     )
 
     app["tournaments"][tid] = tournament
@@ -164,24 +157,16 @@ async def upsert_tournament_to_db(tournament, app):
     }
 
     try:
-        await app["db"].tournament.find_one_and_update(
-            {"_id": tournament.id}, {"$set": new_data}, upsert=True
-        )
+        await app["db"].tournament.find_one_and_update({"_id": tournament.id}, {"$set": new_data}, upsert=True)
     except Exception:
         if app["db"] is not None:
             log.error("Failed to save tournament data to mongodb!")
 
 
-async def get_winners(app, shield, variant=None):
+async def get_winners(app, shield):
     wi = {}
-    if variant is None:
-        variants = VARIANTS
-        limit = 5
-    else:
-        variants = (variant,)
-        limit = 50
 
-    for variant in variants:
+    for variant in VARIANTS:
         if variant.endswith("960"):
             v = variant[:-3]
             z = 1
@@ -194,7 +179,7 @@ async def get_winners(app, shield, variant=None):
             filter_cond["fr"] = SHIELD
 
         winners = []
-        cursor = app["db"].tournament.find(filter_cond, sort=[("startsAt", -1)], limit=limit)
+        cursor = app["db"].tournament.find(filter_cond, sort=[("startsAt", -1)], limit=5)
         async for doc in cursor:
             print("---", doc)
             winners.append((doc["winner"], doc["startsAt"].strftime("%Y.%m.%d"), doc["_id"]))
@@ -204,46 +189,16 @@ async def get_winners(app, shield, variant=None):
     return wi
 
 
-async def get_scheduled_tournaments(app, nb_max=30):
-    """Return max 30 already scheduled tournaments from mongodb"""
-    cursor = app["db"].tournament.find({"$or": [{"status": T_STARTED}, {"status": T_CREATED}]})
-    cursor.sort("startsAt", -1)
-    nb_tournament = 0
-    tournaments = []
-
-    async for doc in cursor:
-        if (
-            doc["status"] in (T_CREATED, T_STARTED)
-            and doc["createdBy"] == "PyChess"
-            and doc.get("fr", "") != ""
-        ):
-            nb_tournament += 1
-            if nb_tournament > nb_max:
-                break
-            else:
-                tournaments.append(
-                    (
-                        doc["fr"],
-                        C2V[doc["v"]],
-                        bool(doc["z"]),
-                        doc["startsAt"],
-                        doc["minutes"],
-                        doc["_id"],
-                    )
-                )
-    return tournaments
-
-
 async def get_latest_tournaments(app):
     tournaments = app["tournaments"]
     started, scheduled, completed = [], [], []
 
     cursor = app["db"].tournament.find()
-    cursor.sort("startsAt", -1)
+    cursor.sort('startsAt', -1)
     nb_tournament = 0
     async for doc in cursor:
         nb_tournament += 1
-        if nb_tournament > 31:
+        if nb_tournament > 20:
             break
 
         tid = doc["_id"]
@@ -258,9 +213,7 @@ async def get_latest_tournaments(app):
                 tournament_class = RRTournament
 
             tournament = tournament_class(
-                app,
-                tid,
-                C2V[doc["v"]],
+                app, tid, C2V[doc["v"]],
                 base=doc["b"],
                 inc=doc["i"],
                 byoyomi_period=int(bool(doc.get("bp"))),
@@ -276,7 +229,7 @@ async def get_latest_tournaments(app):
                 description=doc.get("d", ""),
                 frequency=doc.get("fr", ""),
                 status=doc["status"],
-                with_clock=False,
+                with_clock=False
             )
             tournament.nb_players = doc["nbPlayers"]
 
@@ -287,13 +240,11 @@ async def get_latest_tournaments(app):
         elif doc["status"] > T_STARTED:
             completed.append(tournament)
 
-    scheduled = sorted(scheduled, key=lambda tournament: tournament.starts_at)
-
     return (started, scheduled, completed)
 
 
 async def get_tournament_name(app, tournament_id):
-    """Return Tournament name from app cache or from database"""
+    """ Return Tournament name from app cache or from database """
     if tournament_id in app["tourneynames"]:
         return app["tourneynames"][tournament_id]
 
@@ -313,7 +264,7 @@ async def get_tournament_name(app, tournament_id):
 
 
 async def load_tournament(app, tournament_id, tournament_klass=None):
-    """Return Tournament object from app cache or from database"""
+    """ Return Tournament object from app cache or from database """
     db = app["db"]
     users = app["users"]
     tournaments = app["tournaments"]
@@ -334,20 +285,8 @@ async def load_tournament(app, tournament_id, tournament_klass=None):
     elif tournament_klass is not None:
         tournament_class = tournament_klass
 
-    if doc.get("fr") == SHIELD:
-        doc["d"] = (
-            """
-This Shield trophy is unique.
-The winner keeps it for one month,
-then must defend it during the next %s Shield tournament!
-"""
-            % variant_display_name(C2V[doc["v"]]).title()
-        )
-
     tournament = tournament_class(
-        app,
-        doc["_id"],
-        C2V[doc["v"]],
+        app, doc["_id"], C2V[doc["v"]],
         base=doc["b"],
         inc=doc["i"],
         byoyomi_period=int(bool(doc.get("bp"))),
@@ -362,7 +301,7 @@ then must defend it during the next %s Shield tournament!
         starts_at=doc.get("startsAt"),
         name=doc["name"],
         description=doc.get("d", ""),
-        frequency=doc.get("fr", ""),
+        frequency=doc.get("fr", False),
         status=doc["status"],
     )
 
@@ -370,6 +309,7 @@ then must defend it during the next %s Shield tournament!
     app["tourneysockets"][tournament_id] = {}
     app["tourneychat"][tournament_id] = collections.deque([], MAX_CHAT_LINES)
 
+    tournament.nb_games_finished = doc.get("nbGames", 0)
     tournament.winner = doc.get("winner", "")
 
     player_table = app["db"].tournament_player
@@ -378,7 +318,7 @@ then must defend it during the next %s Shield tournament!
 
     if tournament.status == T_CREATED:
         try:
-            cursor.sort("r", -1)
+            cursor.sort('r', -1)
         except AttributeError:
             print("A unittest MagickMock cursor object")
 
@@ -413,19 +353,15 @@ then must defend it during the next %s Shield tournament!
     pairing_table = app["db"].tournament_pairing
     cursor = pairing_table.find({"tid": tournament_id})
     try:
-        cursor.sort("d", 1)
+        cursor.sort('d', 1)
     except AttributeError:
         print("A unittest MagickMock cursor object")
 
     w_win, b_win, draw, berserk = 0, 0, 0, 0
     async for doc in cursor:
         res = doc["r"]
-        result = C2R[res]
-        # Skip aborted/unfinished games
-        if result == "*":
-            continue
-
         _id = doc["_id"]
+        result = C2R[res]
         wp, bp = doc["u"]
         wrating = doc["wr"]
         brating = doc["br"]
@@ -433,17 +369,7 @@ then must defend it during the next %s Shield tournament!
         wberserk = doc.get("wb", False)
         bberserk = doc.get("bb", False)
 
-        game_data = GameData(
-            _id,
-            users[wp],
-            wrating,
-            users[bp],
-            brating,
-            result,
-            date,
-            wberserk,
-            bberserk,
-        )
+        game_data = GameData(_id, users[wp], wrating, users[bp], brating, result, date, wberserk, bberserk)
 
         tournament.players[users[wp]].games.append(game_data)
         tournament.players[users[bp]].games.append(game_data)
@@ -459,8 +385,6 @@ then must defend it during the next %s Shield tournament!
             berserk += 1
         if bberserk:
             berserk += 1
-
-        tournament.nb_games_finished += 1
 
     tournament.w_win = w_win
     tournament.b_win = b_win

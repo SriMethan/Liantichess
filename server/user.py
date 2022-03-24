@@ -20,19 +20,10 @@ class MissingRatingsException(Exception):
 
 
 class User:
-    def __init__(
-        self,
-        app,
-        bot=False,
-        username=None,
-        anon=False,
-        title="",
-        perfs=None,
-        enabled=True,
-    ):
+    def __init__(self, app, bot=False, username=None, anon=False, title="", perfs=None, enabled=True):
         self.app = app
         self.db = app["db"] if "db" in app else None
-        self.bot = False if username == "PyChessBot" else bot
+        self.bot = bot
         self.anon = anon
         if username is None:
             self.anon = True
@@ -59,10 +50,7 @@ class User:
                 raise MissingRatingsException(username)
             self.perfs = {variant: DEFAULT_PERF for variant in VARIANTS}
         else:
-            self.perfs = {
-                variant: perfs[variant] if variant in perfs else DEFAULT_PERF
-                for variant in VARIANTS
-            }
+            self.perfs = {variant: perfs[variant] if variant in perfs else DEFAULT_PERF for variant in VARIANTS}
         self.enabled = enabled
         self.fen960_as_white = None
 
@@ -86,15 +74,11 @@ class User:
                     try:
                         del self.app["users"][self.username]
                     except KeyError:
-                        log.info("Failed to del %s from users", self.username)
+                        log.error("Failed to del %s from users", self.username)
                     break
 
     def update_online(self):
-        self.online = (
-            len(self.game_sockets) > 0
-            or len(self.lobby_sockets) > 0
-            or len(self.tournament_sockets) > 0
-        )
+        self.online = len(self.game_sockets) > 0 or len(self.lobby_sockets) > 0 or len(self.tournament_sockets) > 0
 
     def get_rating(self, variant: str, chess960: bool) -> Rating:
         if variant in self.perfs:
@@ -120,16 +104,10 @@ class User:
         gl = {"r": rating.mu, "d": rating.phi, "v": rating.sigma}
         la = datetime.now(timezone.utc)
         nb = self.perfs[variant + ("960" if chess960 else "")].get("nb", 0)
-        self.perfs[variant + ("960" if chess960 else "")] = {
-            "gl": gl,
-            "la": la,
-            "nb": nb + 1,
-        }
+        self.perfs[variant + ("960" if chess960 else "")] = {"gl": gl, "la": la, "nb": nb + 1}
 
         if self.db is not None:
-            await self.db.user.find_one_and_update(
-                {"_id": self.username}, {"$set": {"perfs": self.perfs}}
-            )
+            await self.db.user.find_one_and_update({"_id": self.username}, {"$set": {"perfs": self.perfs}})
 
     def as_json(self, requester):
         return {
@@ -138,11 +116,9 @@ class User:
             "online": True if self.username == requester else self.online,
         }
 
-    async def clear_seeks(self, force=False):
+    async def clear_seeks(self, sockets, seeks):
         has_seek = len(self.seeks) > 0
-        if has_seek and (len(self.lobby_sockets) == 0 or force):
-            seeks = self.app["seeks"]
-            sockets = self.app["lobbysockets"]
+        if has_seek and len(self.lobby_sockets) == 0:
             for seek in self.seeks:
                 game_id = self.seeks[seek].game_id
                 # preserve invites (seek with game_id)!

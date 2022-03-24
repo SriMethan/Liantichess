@@ -9,11 +9,24 @@ https://lichess.org/blog/Wqa7GiAAAOIpBLoY/developer-update-275-improved-game-com
 
 # Create mappings to compress variant, result and uci/usi move lists a little
 V2C = {
-    "chess": "n",
-    "capablanca": "c",
-    "capahouse": "i",
-    "crazyhouse": "h",
-    "atomic": "A",
+    "antipawns": "c",
+    "antihouse": "i",
+    "antiplacement": "Q",
+    "antishogun": "Z",
+    "anticapablanca": "n",
+    "antichak": "U",
+    "antigrandhouse": "W",
+    "atomic_giveaway_hill": "h",
+    "coffeehill": "A",
+    "coffeehouse": "L",
+    "antiatomic": "F",
+    "antihoppelpoppel": "Y",
+    "antichess": "f",
+    "losers": "H",
+    "antiminishogi": "R",
+    "coffee_3check": "X",
+    "coffeerace": "N",   
+    "anti_antichess": "V",
     "makruk": "m",
     "placement": "p",
     "seirawan": "s",
@@ -34,19 +47,18 @@ V2C = {
     "shogun": "u",
     "janggi": "j",
     "makpong": "l",
-    "orda": "f",
-    "synochess": "v",
+#    "orda": "f",
+    "antisynochess": "v",
     "hoppelpoppel": "w",
     "manchu": "M",
     "dobutsu": "D",
-    "gorogoroplus": "G",
-    "shinobi": "J",
-    "empire": "P",
-    "ordamirror": "O",
+    "gorogoro": "G",
+    "antishinobi": "J",
+    "antiempire": "P",
+    "antikoth": "O",
     "torishogi": "T",
     "asean": "S",
-    "chak": "C",
-    "chennis": "H",
+    "antiorda": "C",
 }
 C2V = {v: k for k, v in V2C.items()}
 
@@ -76,37 +88,24 @@ for piece in PIECES:
     M2C["%s@" % piece] = m2c_len
     m2c_len += 1
 
-# Chennis drop moves can start with extra "+" as well (P and S are already added above for Kyoto Shogi)
-for piece in "FM":
-    M2C["+%s" % piece] = m2c_len
-    m2c_len += 1
-
 C2M = {v: k for k, v in M2C.items()}
 
 
 def encode_moves(moves, variant):
-    if variant in ("kyotoshogi", "chennis"):
+    if variant == "kyotoshogi":
         return [
             chr(M2C[move[0:2]]) + chr(M2C[move[3:5]]) + "@"
-            if move[0] == "+"
-            else chr(M2C[move[0:2]]) + chr(M2C[move[2:4]]) + (move[4] if len(move) == 5 else "")
-            for move in moves
-        ]
-    return [
-        chr(M2C[move[0:2]]) + chr(M2C[move[2:4]]) + (move[4] if len(move) == 5 else "")
-        for move in moves
-    ]
+            if move[0] == "+" else
+            chr(M2C[move[0:2]]) + chr(M2C[move[2:4]]) + (move[4] if len(move) == 5 else "")
+            for move in moves]
+    return [chr(M2C[move[0:2]]) + chr(M2C[move[2:4]]) + (move[4] if len(move) == 5 else "") for move in moves]
 
 
 def decode_moves(moves, variant):
-    if variant in ("kyotoshogi", "chennis"):
+    if variant == "kyotoshogi":
         return [
             C2M[ord(move[0])] + "@" + C2M[ord(move[1])]
-            if move[-1] == "@"
-            else C2M[ord(move[0])] + C2M[ord(move[1])] + (move[2] if len(move) == 3 else "")
-            for move in moves
-        ]
-    return [
-        C2M[ord(move[0])] + C2M[ord(move[1])] + (move[2] if len(move) == 3 else "")
-        for move in moves
-    ]
+            if move[-1] == "@" else
+            C2M[ord(move[0])] + C2M[ord(move[1])] + (move[2] if len(move) == 3 else "")
+            for move in moves]
+    return [C2M[ord(move[0])] + C2M[ord(move[1])] + (move[2] if len(move) == 3 else "") for move in moves]

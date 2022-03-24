@@ -33,6 +33,7 @@ export class EditorController {
     vfen: VNode;
     vAnalysis: VNode;
     vChallenge: VNode;
+    anon: boolean;
     flip: boolean;
     ffish: any;
     ffishBoard: any;
@@ -42,6 +43,7 @@ export class EditorController {
         this.variant = VARIANTS[model["variant"]];
         this.startfen = model["fen"] as string;
         this.flip = false;
+        this.anon = model["anon"] === 'True';
 
         this.parts = this.startfen.split(" ");
         this.castling = this.parts.length > 2 ? this.parts[2] : '';
@@ -186,7 +188,7 @@ export class EditorController {
                     h('div.icon.icon-microscope', _('ANALYSIS BOARD'))
                 ]),
                 h('a#challengeAI.i-pgn', { on: { click: () => this.setChallengeFen() } }, [
-                    h('div.icon.icon-bot', _('PLAY WITH MACHINE'))
+                    h('div.icon.icon-bot', _('PLAY WITH MACHINE') + ((model["anon"] === 'True') ? _(' (must be signed in)') : ''))
                 ]),
                 h('a#pgn.i-pgn', { on: { click: () => copyBoardToPNG(this.parts.join(' ')) } }, [
                     h('div.icon.icon-download', _('EXPORT TO PNG'))
@@ -259,7 +261,7 @@ export class EditorController {
         analysis.classList.toggle('disabled', invalid);
 
         const challenge = document.getElementById('challengeAI') as HTMLElement;
-        challenge.classList.toggle('disabled', invalid);
+        challenge.classList.toggle('disabled', invalid || this.anon);
 
         const e = document.getElementById('fen') as HTMLInputElement;
         e.setCustomValidity(invalid ? _('Invalid FEN') : '');

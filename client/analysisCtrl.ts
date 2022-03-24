@@ -15,7 +15,7 @@ import { _ } from './i18n';
 import { Gating } from './gating';
 import { Promotion } from './promotion';
 import { sound } from './sound';
-import { uci2LastMove, uci2cg, cg2uci, VARIANTS, Variant, moveDests, notation } from './chess';
+import { uci2cg, cg2uci, VARIANTS, Variant, moveDests, notation } from './chess';
 import { crosstableView } from './crosstable';
 import { chatMessage, chatView } from './chat';
 import { createMovelistButtons, updateMovelist, selectMove, activatePlyVari } from './movelist';
@@ -149,7 +149,8 @@ export default class AnalysisController {
             onerror: (e: Event) => console.log('Error:', e),
             };
 
-        const ws = (location.host.indexOf('pychess') === -1) ? 'ws://' : 'wss://';
+        //const ws = (location.host.indexOf('pychess') === -1) ? 'ws://' : 'wss://';
+        const ws = (location.host.indexOf('0.0.0.0') === -1) ? 'wss://' : 'ws://'
         this.sock = new Sockette(ws + location.host + "/wsr", opts);
 
         // is local stockfish.wasm engine supports current variant?
@@ -399,24 +400,24 @@ export default class AnalysisController {
         if (container !== null) {
             const buttons = [
                 h('a.i-pgn', { on: { click: () => downloadPgnText("pychess-variants_" + this.gameId) } }, [
-                    h('i', {props: {title: _('Download game to PGN file')}, class: {"icon": true, "icon-download": true} }, _('Download PGN'))]),
+                    h('i', {props: {title: _('Download game to PGN file')}, class: {"icon": true, "icon-download": true} }, _(' Download PGN'))]),
                 h('a.i-pgn', { on: { click: () => copyTextToClipboard(this.uci_usi) } }, [
-                    h('i', {props: {title: _('Copy USI/UCI to clipboard')}, class: {"icon": true, "icon-clipboard": true} }, _('Copy UCI/USI'))]),
+                    h('i', {props: {title: _('Copy USI/UCI to clipboard')}, class: {"icon": true, "icon-clipboard": true} }, _(' Copy UCI/USI'))]),
                 h('a.i-pgn', { on: { click: () => copyBoardToPNG(this.fullfen) } }, [
-                    h('i', {props: {title: _('Download position to PNG image file')}, class: {"icon": true, "icon-download": true} }, _('PNG image'))]),
+                    h('i', {props: {title: _('Download position to PNG image file')}, class: {"icon": true, "icon-download": true} }, _(' PNG image'))]),
                 ]
 
             // Enable to delete imported games
             if (this.model["rated"] === '2' && this.importedBy === this.model["username"]) {
                 buttons.push(
                     h('a.i-pgn', { on: { click: () => this.deleteGame() } }, [
-                        h('i', {props: {title: _('Delete game')}, class: {"icon": true, "icon-trash-o": true} }, _('Delete game'))])
+                        h('i', {props: {title: _('Delete game')}, class: {"icon": true, "icon-trash-o": true} }, _(' Delete game'))])
                 );
             }
 
             if (this.steps[0].analysis === undefined && !this.isAnalysisBoard) {
                 buttons.push(h('button#request-analysis', { on: { click: () => this.drawAnalysisChart(true) } }, [
-                    h('i', {props: {title: _('Request Computer Analysis')}, class: {"icon": true, "icon-bar-chart": true} }, _('Request Analysis'))])
+                    h('i', {props: {title: _('Request Computer Analysis')}, class: {"icon": true, "icon-bar-chart": true} }, _(' Request Analysis'))])
                 );
             }
             patch(container, h('div', buttons));
@@ -484,12 +485,21 @@ export default class AnalysisController {
             }
         }
 
-        const lastMove = uci2LastMove(msg.lastMove);
-        const step = this.steps[this.steps.length - 1];
-        const capture = (lastMove.length > 0) && ((this.chessground.state.pieces.get(lastMove[1]) && step.san?.slice(0, 2) !== 'O-') || (step.san?.slice(1, 2) === 'x'));
+        let lastMove: cg.Key[] | null = null;
+        if (msg.lastMove !== null) {
+            const lastMoveStr = uci2cg(msg.lastMove);
+            // drop lastMove causing scrollbar flicker,
+            // so we remove from part to avoid that
+            lastMove = lastMoveStr.indexOf('@') > -1 ? [lastMoveStr.slice(-2) as cg.Key] : [lastMoveStr.slice(0, 2) as cg.Key, lastMoveStr.slice(2, 4) as cg.Key];
+        }
 
-        if (lastMove.length > 0 && (this.turnColor === this.mycolor || this.spectator)) {
+        const step = this.steps[this.steps.length - 1];
+        const capture = (lastMove !== null) && ((this.chessground.state.pieces.get(lastMove[1]) && step.san?.slice(0, 2) !== 'O-') || (step.san?.slice(1, 2) === 'x'));
+
+        if (lastMove !== null && (this.turnColor === this.mycolor || this.spectator)) {
             sound.moveSound(this.variant, capture);
+        } else {
+            lastMove = [];
         }
         this.checkStatus(msg);
 
@@ -505,6 +515,10 @@ export default class AnalysisController {
             this.ply = this.model["ply"]
             selectMove(this, this.ply);
         }
+    }
+
+    moveIndex = (ply: number) => {
+      return Math.floor((ply - 1) / 2) + 1 + (ply % 2 === 1 ? '.' : '...');
     }
 
     notation2ffishjs = (n: cg.Notation) => {
@@ -772,9 +786,11 @@ export default class AnalysisController {
         const vv = this.steps[plyVari]?.vari;
         const step = (plyVari > 0 && vv ) ? vv[ply] : this.steps[ply];
 
-        const move = uci2LastMove(step.move);
+        let move : cg.Key[] = [];
         let capture = false;
-        if (move.length > 0) {
+        if (step.move !== undefined) {
+            const moveStr = uci2cg(step.move);
+            move = moveStr.indexOf('@') > -1 ? [moveStr.slice(-2) as cg.Key] : [moveStr.slice(0, 2) as cg.Key, moveStr.slice(2, 4) as cg.Key];
             // 960 king takes rook castling is not capture
             // TODO defer this logic to ffish.js
             capture = (this.chessground.state.pieces.get(move[move.length - 1]) !== undefined && step.san?.slice(0, 2) !== 'O-') || (step.san?.slice(1, 2) === 'x');
@@ -994,10 +1010,18 @@ export default class AnalysisController {
         const parts = msg.fen.split(" ");
         this.turnColor = parts[1] === "w" ? "white" : "black";
 
+        let lastMove: cg.Key[] = [];
+        if (msg.lastMove !== null) {
+            const lastMoveStr = uci2cg(msg.lastMove);
+            // drop lastMove causing scrollbar flicker,
+            // so we remove from part to avoid that
+            lastMove = lastMoveStr.indexOf('@') > -1 ? [lastMoveStr.slice(-2) as cg.Key] : [lastMoveStr.slice(0, 2) as cg.Key, lastMoveStr.slice(2, 4) as cg.Key];
+        }
+
         this.chessground.set({
             fen: this.fullfen,
             turnColor: this.turnColor,
-            lastMove: uci2LastMove(msg.lastMove),
+            lastMove: lastMove,
             check: msg.check,
             movable: {
                 color: this.turnColor,

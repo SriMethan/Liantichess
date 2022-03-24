@@ -118,11 +118,11 @@ export class LobbyController {
     spotlights: VNode | HTMLElement;
     minutesValues = [
         0, 1 / 4, 1 / 2, 3 / 4, 1, 3 / 2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-        17, 18, 19, 20, 25, 30, 35, 40, 45, 60, 75, 90
+        17, 18, 19, 20, 25, 30, 35, 40, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180
     ];
     incrementValues = [ 
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-        25, 30, 35, 40, 45, 60, 90
+        25, 30, 35, 40, 45, 60, 90, 120, 150, 180
     ];
     minutesStrings = ["0", "¼", "½", "¾"];
 
@@ -161,7 +161,8 @@ export class LobbyController {
             onerror: (e: Event) => console.log('Error:', e),
         };
 
-        const ws = location.host.includes('pychess') ? 'wss://' : 'ws://';
+        //const ws = location.host.includes('pychess') ? 'wss://' : 'ws://';
+        const ws = (location.host.indexOf('0.0.0.0') === -1) ? 'wss://' : 'ws://'
         this.sock = new Sockette(ws + location.host + "/wsl", opts);
 
         // get seeks when we are coming back after a game
@@ -171,7 +172,7 @@ export class LobbyController {
         patch(document.getElementById('seekbuttons') as HTMLElement, h('div#seekbuttons', this.renderSeekButtons()));
         patch(document.getElementById('lobbychat') as HTMLElement, chatView(this, "lobbychat"));
 
-        patch(document.getElementById('variants-catalog') as HTMLElement, variantPanels(this));
+  //      patch(document.getElementById('variants-catalog') as HTMLElement, variantPanels(this));
 
         this.streams = document.getElementById('streams') as HTMLElement;
 
@@ -374,8 +375,7 @@ export class LobbyController {
 
     renderSeekButtons() {
         const vVariant = this.model.variant || localStorage.seek_variant || "chess";
-        // 5+3 default TC needs vMin 9 because of the partial numbers at the beginning of minutesValues
-        const vMin = localStorage.seek_min ?? "9";
+        const vMin = localStorage.seek_min ?? "5";
         const vInc = localStorage.seek_inc ?? "3";
         const vByoIdx = (localStorage.seek_byo ?? 1) - 1;
         const vRated = localStorage.seek_rated ?? "0";
@@ -723,7 +723,7 @@ export class LobbyController {
     }
     private mode(seek: Seek) {
         if (seek.alternateStart)
-            return _(seek.alternateStart);
+            return seek.alternateStart;
         else if (seek.fen)
             return _("Custom");
         else if (seek.rated)
@@ -734,8 +734,7 @@ export class LobbyController {
 
     private streamView(stream: Stream) {
         const url = (stream.site === 'twitch') ? 'https://www.twitch.tv/' : 'https://www.youtube.com/channel/';
-        const tail = (stream.site === 'youtube') ? '/live' : '';
-        return h('a.stream', { attrs: { "href": url + stream.streamer + tail, "rel": "noopener nofollow", "target": "_blank" } }, [
+        return h('a.stream', { attrs: { "href": url + stream.streamer, "rel": "noopener nofollow", "target": "_blank" } }, [
             h('strong.text', {class: {"icon": true, "icon-mic": true} }, stream.username),
             stream.title,
         ]);
@@ -744,7 +743,6 @@ export class LobbyController {
     private spotlightView(spotlight: Spotlight) {
         const variant = VARIANTS[spotlight.variant];
         const chess960 = spotlight.chess960;
-        const variantName = variant.displayName(chess960);
         const dataIcon = variant.icon(chess960);
 
         return h('a.tour-spotlight', { attrs: { "href": "/tournament/" + spotlight.tid } }, [
@@ -752,7 +750,6 @@ export class LobbyController {
             h('span.content', [
                 h('span.name', spotlight.name),
                 h('span.more', [
-                    h('variant', variantName + ' • '),
                     h('nb', ngettext('%1 player', '%1 players', spotlight.nbPlayers) + ' • '),
                     h('info-date', { attrs: { "timestamp": spotlight.startsAt } } )
                 ])
@@ -878,10 +875,7 @@ export class LobbyController {
     }
 
     private onMsgSpotlights(msg: MsgSpotlights) {
-        this.spotlights = patch(this.spotlights, h('div#spotlights', [
-            h('div', msg.items.map(spotlight => this.spotlightView(spotlight))),
-            h('a.cont-link', { attrs: { href: '/calendar' } }, _('Tournament calendar') + ' »'),
-        ]));
+        this.spotlights = patch(this.spotlights, h('div#spotlights', msg.items.map(spotlight => this.spotlightView(spotlight))));
     }
 }
 
@@ -930,64 +924,55 @@ export function lobbyView(model: PyChessModel): VNode[] {
                 h('div#seeks-wrapper', h('table#seeks', { hook: { insert: vnode => runSeeks(vnode, model) } })),
             ]),
         ]),
-        h('div#variants-catalog'),
+  //      h('div#variants-catalog'),
         h('aside.sidebar-second', [ h('div#seekbuttons') ]),
         h('under-left', [
-            h('a.reflist', { attrs: { href: 'https://discord.gg/aPs8RKr', rel: "noopener", target: "_blank" } }, 'Discord'),
-            h('a.reflist', { attrs: { href: 'https://github.com/gbtami/pychess-variants', rel: "noopener", target: "_blank" } }, 'Github'),
-            h('a.reflist', { attrs: { href: 'https://www.youtube.com/channel/UCj_r_FSVXQFLgZLwSeFBE8g', rel: "noopener", target: "_blank" } }, 'YouTube'),
-            h('a.reflist', { attrs: { href: '/patron' } }, _("Donate")),
+            h('a.reflist', { attrs: { href: 'https://discord.gg/5qvjPQstKS' } }, 'Discord'),
+            h('a.reflist', { attrs: { href: 'https://github.com/SriMethan/Liantichess' } }, 'Github'),
             h('a.reflist', { attrs: { href: '/faq' } }, _("FAQ")),
             h('a.reflist', { attrs: { href: '/stats' } }, _("Stats")),
             h('a.reflist', { attrs: { href: '/about' } }, _("About")),
+        ]),
+        h('under-right', [
+            h('a', { attrs: { href: '/players' } }, [ h('counter#u_cnt') ]),
+            h('a', { attrs: { href: '/games' } }, [ h('counter#g_cnt') ]),
         ]),
         h('under-lobby', [
             h('news-latest', [
                 h('icon', { attrs: {"data-icon": '2'} }),
                 h('a.reflist', { attrs: {href: '/news'} }, _("Latest updates")),
             ]),
-            h('posts', [
-                // TODO: create news documents in mongodb and load latest 3 dinamically here
-                h('a.post', { attrs: {href: '/news/Serving_a_New_Variant'} }, [
-                    h('img', { attrs: {src: model["asset-url"] + '/images/ChessTennis.jpg'} }),
-                    h('span.text', [
-                        h('strong', "Tennis and chess"),
-                        h('span', 'Serving a New Variant'),
-                    ]),
-                    h('time', '2022.02.01'),
+        h('posts', [
+            h('a.post', { attrs: {href: '/news/variants'} }, [
+                h('img', { attrs: {src: model["asset-url"] + '/images/variants.png'} }),
+                h('span.text', [
+                    h('strong', "How to play the variants on liantichess?"),
+                    h('span', 'antichess opening strategies does not work in the antichess variants'),
                 ]),
-                h('a.post', { attrs: {href: '/news/Merry_Chakmas'} }, [
-                    h('img', { attrs: {src: model["asset-url"] + '/images/QuetzalinTikal.png'} }),
-                    h('span.text', [
-                        h('strong', "Christmas gift from PyChess"),
-                        h('span', 'Merry Chak-mas!'),
-                    ]),
-                    h('time', '2021.12.24'),
+                h('time', '2022.11.03'),
+            ]),
+
+        h('posts', [
+            h('a.post', { attrs: {href: '/news/marathon'} }, [
+                h('img', { attrs: {src: model["asset-url"] + '/images/marathon.png'} }),
+                h('span.text', [
+                    h('strong', "AntiChess Marathon #1"),
+                    h('span', '24 hours of antichess. Do you have what it takes to win?'),
                 ]),
-                h('a.post', { attrs: {href: '/news/Cold_Winter'} }, [
-                    h('img', { attrs: {src: model["asset-url"] + '/images/board/ChakArt.jpg'} }),
-                    h('span.text', [
-                        h('strong', "Summary of latest changes"),
-                        h('span', 'Cold winter'),
-                    ]),
-                    h('time', '2021.12.21'),
+                h('time', '2022.11.03'),
+            ]),
+
+        h('posts', [
+            h('a.post', { attrs: {href: '/news/newvariants'} }, [
+                h('img', { attrs: {src: model["asset-url"] + '/images/newblog.png'} }),
+                h('span.text', [
+                    h('strong', "New variants and much more!"),
+                    h('span', 'many variants are now available on liantichess. But also other new features and many bug fixes.'),
                 ]),
-                /*
-                h('a.post', { attrs: {href: '/news/Hot_Summer'} }, [
-                    h('img', { attrs: {src: model["asset-url"] + '/images/AngryBirds.png'} }),
-                    h('span.text', [
-                        h('strong', "New variant, new engine and more"),
-                        h('span', 'Hot summer'),
-                    ]),
-                    h('time', '2021.09.02'),
-                ]),
-                h('a.post', { attrs: {href: '/news/Empire_Chess_and_Orda_Mirror_Have_Arrived'} }, [
-                    h('img', { attrs: {src: model["asset-url"] + '/images/Darth-Vader-Comic.jpg'} }),
-                    h('span.text', [
-                        h('strong', "Empire Chess and Orda Mirror Have Arrived!"),
-                        h('span', 'New variants'),
-                    ]),
-                    h('time', '2021.07.30'),
+                h('time', '2022.01.02'),
+            ]),
+
+                 	    /*   
                 ]),
                 h('a.post', { attrs: {href: '/news/Shinobi_Arrives_in_Time_For_the_Sakura_Blossoms'} }, [
                     h('img', { attrs: {src: model["asset-url"] + '/icons/shinobi.svg'} }),
@@ -1031,10 +1016,6 @@ export function lobbyView(model: PyChessModel): VNode[] {
                 ]),
                 */ 
             ]),
-        ]),
-        h('under-right', [
-            h('a', { attrs: { href: '/players' } }, [ h('counter#u_cnt') ]),
-            h('a', { attrs: { href: '/games' } }, [ h('counter#g_cnt') ]),
         ]),
     ];
 }

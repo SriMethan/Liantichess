@@ -3,7 +3,7 @@ import { h, VNode } from 'snabbdom';
 import { Chessground } from 'chessgroundx';
 
 import { _, ngettext, pgettext } from './i18n';
-import { uci2LastMove, VARIANTS, Variant } from './chess';
+import { VARIANTS, Variant } from './chess';
 import { patch } from './document';
 import { renderTimeago } from './datetime';
 import { boardSettings } from './boardSettings';
@@ -85,10 +85,8 @@ export function result(variant: Variant, status: number, result: string) {
                 case 'shinobi':
                 case 'empire':
                 case 'ordamirror':
-                    text = _('Campmate');
-                    break;
                 case 'chak':
-                    text = _('Altar mate');
+                    text = _('Campmate');
                     break;
                 case 'atomic':
                     text = _('Explosion of king');
@@ -134,7 +132,6 @@ interface Game {
     z: number;
     v: string;
     f: cg.FEN;
-    lm: string;
 
     b: number;
     i: number;
@@ -179,9 +176,8 @@ function renderGames(model: PyChessModel, games: Game[]) {
     const rows = games.map(game => {
         const variant = VARIANTS[game.v];
         const chess960 = game.z === 1;
-
         return h('tr', [h('a', { attrs: { href : '/' + game["_id"] } }, [
-            h('td.board', { class: { "with-pockets": variant.pocketRoles('white') !== undefined } }, [
+            h('td.board', [
                 h(`selection.${variant.board}.${variant.piece}`, [
                     h(`div.cg-wrap.${variant.cg}.mini`, {
                         hook: {
@@ -189,10 +185,7 @@ function renderGames(model: PyChessModel, games: Game[]) {
                                 coordinates: false,
                                 viewOnly: true,
                                 fen: game["f"],
-                                lastMove: uci2LastMove(game.lm),
                                 geometry: variant.geometry,
-                                addDimensionsCssVars: true,
-                                pocketRoles: color => variant.pocketRoles(color),
                             })
                         }
                     }),

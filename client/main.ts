@@ -11,7 +11,6 @@ import { editorView } from './editor';
 import { analysisView, embedView } from './analysis';
 import { profileView } from './profile';
 import { tournamentView } from './tournament';
-import { calendarView } from './calendar';
 import { pasteView } from './paste';
 import { statsView } from './stats';
 import { volumeSettings, soundThemeSettings } from './sound';
@@ -22,7 +21,7 @@ import { zenButtonView, zenModeSettings } from './zen';
 
 // redirect to correct URL except Heroku preview apps
 if (window.location.href.includes('heroku') && !window.location.href.includes('-pr-')) {
-    window.location.assign('https://www.pychess.org/');
+    //window.location.assign('https://www.pychess.org/');
 }
 
 export type PyChessModel = {
@@ -129,8 +128,6 @@ export function view(el: HTMLElement, model: PyChessModel): VNode {
         return h('div#main-wrap', editorView(model));
     case 'tournament':
         return h('div#main-wrap', [h('main.tour', tournamentView(model))]);
-    case 'calendar':
-        return h('div#calendar', calendarView());
     case 'games':
         return h('div', renderGames());
     case 'paste':
