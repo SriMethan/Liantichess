@@ -333,14 +333,14 @@ async def index(request):
         template = get_template("index.html")
 
     if view == "lobby":
-        page_title = "PyChess • Free Online Chess Variants"
+        page_title = "Liantichess • Free Online AntiChess Variants"
     else:
-        page_title = "%s • PyChess" % view.capitalize()
+        page_title = "%s • Liantichess" % view.capitalize()
 
     render = {
         "js": "/static/pychess-variants.js%s%s" % (BR_EXTENSION, SOURCE_VERSION),
         "dev": DEV,
-        "app_name": "PyChess",
+        "app_name": "Liantichess",
         "languages": LANGUAGES,
         "lang": lang,
         "title": page_title,
