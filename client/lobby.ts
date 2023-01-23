@@ -85,7 +85,7 @@ export class LobbyController implements ChatController {
         patch(document.getElementById('seekbuttons') as HTMLElement, h('div#seekbuttons', this.renderSeekButtons()));
         patch(document.getElementById('lobbychat') as HTMLElement, chatView(this, "lobbychat"));
 
-        patch(document.getElementById('variants-catalog') as HTMLElement, variantPanels(this));
+      //patch(document.getElementById('variants-catalog') as HTMLElement, variantPanels(this));
 
         this.streams = document.getElementById('streams') as HTMLElement;
 
@@ -862,42 +862,43 @@ export function lobbyView(model: PyChessModel): VNode[] {
                 h('div#seeks-wrapper', h('table#seeks', { hook: { insert: vnode => runSeeks(vnode, model) } })),
             ]),
         ]),
-        h('div#variants-catalog'),
+      //h('div#variants-catalog'),
         h('aside.sidebar-second', [ h('div#seekbuttons') ]),
         h('under-left', [
-            h('a.reflist', { attrs: { href: 'https://discord.gg/aPs8RKr', rel: "noopener", target: "_blank" } }, 'Discord'),
-            h('a.reflist', { attrs: { href: 'https://github.com/gbtami/pychess-variants', rel: "noopener", target: "_blank" } }, 'Github'),
-            h('a.reflist', { attrs: { href: 'https://www.youtube.com/channel/UCj_r_FSVXQFLgZLwSeFBE8g', rel: "noopener", target: "_blank" } }, 'YouTube'),
-            h('a.reflist', { attrs: { href: '/patron' } }, _("Donate")),
+            h('a.reflist', { attrs: { href: 'https://discord.gg/5qvjPQstKS' } }, 'Discord'),
+            h('a.reflist', { attrs: { href: 'https://github.com/SriMethan/Liantichess' } }, 'Github'),
             h('a.reflist', { attrs: { href: '/faq' } }, _("FAQ")),
             h('a.reflist', { attrs: { href: '/stats' } }, _("Stats")),
             h('a.reflist', { attrs: { href: '/about' } }, _("About")),
         ]),
         h('under-lobby', [
             h('posts', [
-                h('a.post', { attrs: {href: '/news/Duck_Chess'} }, [
-                    h('img', { attrs: {src: model.assetURL + '/images/Duck.jpg'} }),
+                h('a.post', { attrs: {href: '/news/fools'} }, [
+                    h('img', { attrs: {src: model.assetURL + '/images/fools.jpg'} }),
                     h('span.text', [
-                        h('strong', _("A Christmas Present From Pychess")),
-                        h('span', _('Duck chess has arrived')),
+                        h('strong', "[April Fools] Liantichess's database is running out"),
+                        h('span', 'Liantichess Mongodb database has running out of space, It will delete all your games, and all the user accounts.'),
                     ]),
-                    h('time', '2022.12.26'),
+                    h('time', '2022.04.01'),
                 ]),
-                h('a.post', { attrs: {href: '/news/Ouk_Chaktrang_Friendship_Between_Four_Countries_Tournament'} }, [
-                    h('img', { attrs: {src: model.assetURL + '/images/four-countries.jpg'} }),
+            h('posts', [
+                h('a.post', { attrs: {href: '/news/analysis'} }, [
+                    h('img', { attrs: {src: model.assetURL + '/images/analysis.png'} }),
                     h('span.text', [
-                        h('strong', _("Ouk Chaktrang Friendship Between Four Countries Tournament")),
-                        h('span', _('Promoting Our Southeast Asian Brethren')),
+                        h('strong', "What's up on liantichess"),
+                        h('span', 'Exciting stuff is going on. Lets keep you in the loop.'),
                     ]),
-                    h('time', '2022.12.01'),
+                    h('time', '2022.03.25'),
                 ]),
-                h('a.post', { attrs: {href: '/news/Crazyhouse960_Tournament_Spring_Invitational_2022'} }, [
-                    h('img', { attrs: {src: model.assetURL + '/images/one-flew-over-the-cuckoos-nest.jpg '} }),
+    
+            h('posts', [
+                h('a.post', { attrs: {href: '/news/variants'} }, [
+                    h('img', { attrs: {src: model.assetURL + '/images/variants.png'} }),
                     h('span.text', [
-                        h('strong', _("Crazyhouse960 Tournament Spring Invitational 2022")),
-                        h('span', _('Final Standings')),
+                        h('strong', "How to play the variants on liantichess?"),
+                        h('span', 'antichess opening strategies does not work in the antichess variants'),
                     ]),
-                    h('time', '2022.10.02'),
+                    h('time', '2022.03.11'),
                 ]),
                 /*
                 h('a.post', { attrs: {href: '/news/NNUE_Everywhere'} }, [

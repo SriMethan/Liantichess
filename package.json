@@ -1,19 +1,19 @@
 {
-  "name": "pychess-variants",
+  "name": "liantichess",
   "version": "0.0.2",
   "private": true,
-  "description": "free, open-source chess server designed to play chess variants.",
+  "description": "Antichess Variants Server",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gbtami/pychess-variants.git"
+    "url": "https://github.com/SriMethan/liantichess.git"
   },
   "main": "static/pychess-variants.js",
-  "author": "Bajusz Tamás",
+  "author": "Bajusz Tamás And SriMethan",
   "license": "AGPL-3.0",
   "bugs": {
-    "url": "https://github.com/gbtami/pychess-variants/issues"
+    "url": "https://github.com/SriMethan/liantichess/issues"
   },
-  "funding": "patreon.com/pychess",
+  "funding": "patreon.com/srimethan",
   "dependencies": {
     "@fullcalendar/core": "^6.0.2",
     "@fullcalendar/daygrid": "^6.0.2",

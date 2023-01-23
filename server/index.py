@@ -24,6 +24,7 @@ from const import (
     VARIANTS,
     VARIANT_ICONS,
     VARIANT_GROUPS,
+    TROPHY_KIND,
     RATED,
     IMPORTED,
     T_CREATED,
@@ -184,6 +185,8 @@ async def index(request):
         view = "patron"
     elif request.path == "/patron/thanks":
         view = "thanks"
+    elif request.path == "/titled-players":
+        view = "titled-players"
     elif request.path == "/level8win":
         view = "level8win"
     elif request.path == "/tv":
@@ -352,6 +355,8 @@ async def index(request):
         template = get_template("video.html")
     elif view == "patron":
         template = get_template("patron.html")
+    elif view == "titled-players":
+        template = get_template("titled-players.html")        
     elif view == "faq":
         template = get_template("FAQ.html")
     elif view == "analysis":
@@ -362,9 +367,9 @@ async def index(request):
         template = get_template("index.html")
 
     if view == "lobby":
-        page_title = "PyChess • Free Online Chess Variants"
+        page_title = "Liantichess • Free Online Antichess Variants"
     else:
-        page_title = "%s • PyChess" % view.capitalize()
+        page_title = "%s • Liantichess" % view.capitalize()
 
     render = {
         "js": "/static/pychess-variants.js%s%s" % (BR_EXTENSION, SOURCE_VERSION),
@@ -410,7 +415,7 @@ async def index(request):
             if profileId in CUSTOM_TROPHY_OWNERS:
                 trophies = CUSTOM_TROPHY_OWNERS[profileId]
                 for v, kind in trophies:
-                    if v in VARIANTS:
+                    if v in TROPHY_KIND:
                         render["trophies"].append((v, kind))
 
         render["title"] = "Profile • " + profileId

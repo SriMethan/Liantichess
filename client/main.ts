@@ -23,7 +23,7 @@ import { PyChessModel } from './types';
 
 // redirect to correct URL except Heroku preview apps
 if (window.location.href.includes('heroku') && !window.location.href.includes('-pr-')) {
-    window.location.assign('https://www.pychess.org/');
+  //window.location.assign('https://www.pychess.org/');
 }
 
 function initModel(el: HTMLElement) {

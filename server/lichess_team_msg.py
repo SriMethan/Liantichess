@@ -27,7 +27,7 @@ async def lichess_team_msg(app):
         print("No more lichess team msg for today!")
         return
 
-    team_id = "pychess-tournaments"
+    team_id = "Liantichess.herokuapp.com"
     msg = upcoming_tournaments_msgs(app["tournaments"])
     print(msg)
 
@@ -52,11 +52,11 @@ def upcoming_tournaments_msgs(tournaments):
         if tourney.status == T_CREATED and tourney.starts_at.date() <= to_date:
             tc = time_control_str(tourney.base, tourney.inc, tourney.byoyomi_period)
             at = tourney.starts_at.strftime("%H:%M")
-            url = "https://www.pychess.org/tournament/%s" % _id
+            url = "http://liantichess.herokuapp.com/tournament/%s" % _id
             tourney_msgs.append("%s %s starts at today UTC %s\n%s" % (tc, tourney.name, at, url))
 
     tourney_msgs.append(
-        "If you want more notifications (10 min before start) join our Discord https://discord.gg/aPs8RKr and use #self-roles! Thx."
+        "If you want more notifications (10 min before start) join our Discord https://discord.gg/5qvjPQstKS and use #self-roles! Thanks."
     )
 
     return "\n\n".join(tourney_msgs)
