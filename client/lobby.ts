@@ -881,7 +881,6 @@ export function lobbyView(model: PyChessModel): VNode[] {
                     ]),
                     h('time', '2022.04.01'),
                 ]),
-            h('posts', [
                 h('a.post', { attrs: {href: '/news/analysis'} }, [
                     h('img', { attrs: {src: model.assetURL + '/images/analysis.png'} }),
                     h('span.text', [
@@ -890,8 +889,6 @@ export function lobbyView(model: PyChessModel): VNode[] {
                     ]),
                     h('time', '2022.03.25'),
                 ]),
-    
-            h('posts', [
                 h('a.post', { attrs: {href: '/news/variants'} }, [
                     h('img', { attrs: {src: model.assetURL + '/images/variants.png'} }),
                     h('span.text', [
