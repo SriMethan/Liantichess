@@ -39,6 +39,15 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.icon-Bughouse960:before {
+  content: "\2300";
+}
+.icon-Bughouse:before {
+  content: "\a2";
+}
+.icon-spartan:before {
+  content: "\237a";
+}
 .icon-duck:before {
   content: "\1f986";
 }
@@ -371,4 +380,10 @@
 }
 .icon-pause:before {
   content: "\ea1d";
+}
+.icon-arrow-up-right:before {
+  content: "\2b08";
+}
+.icon-arrow-down-right:before {
+  content: "\2b0a";
 }

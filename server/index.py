@@ -57,6 +57,11 @@ from tournaments import (
     create_or_update_tournament,
     get_tournament_name,
 )
+from puzzle import (
+    get_puzzle,
+    next_puzzle,
+    get_daily_puzzle,
+)
 from custom_trophy_owners import CUSTOM_TROPHY_OWNERS
 
 log = logging.getLogger(__name__)
@@ -161,7 +166,6 @@ async def index(request):
     ply = request.rel_url.query.get("ply")
 
     tournamentId = request.match_info.get("tournamentId")
-
     if request.path == "/about":
         view = "about"
     elif request.path == "/faq":
@@ -175,6 +179,8 @@ async def index(request):
     elif request.path.startswith("/video"):
         videoId = request.match_info.get("videoId")
         view = "videos" if videoId is None else "video"
+    elif request.path.startswith("/memory"):
+        view = "memory"
     elif request.path.startswith("/players"):
         view = "players"
     elif request.path == "/allplayers":
@@ -240,6 +246,8 @@ async def index(request):
             await tournament.pause(user)
     elif request.path.startswith("/calendar"):
         view = "calendar"
+    elif request.path.startswith("/puzzle"):
+        view = "puzzle"
 
     profileId = request.match_info.get("profileId")
     if profileId is not None and profileId not in users:
@@ -349,6 +357,8 @@ async def index(request):
         template = get_template("news.html")
     elif view == "variants":
         template = get_template("variants.html")
+    elif view == "memory":
+        template = get_template("memory.html")
     elif view == "videos":
         template = get_template("videos.html")
     elif view == "video":
@@ -359,7 +369,7 @@ async def index(request):
         template = get_template("titled-players.html")        
     elif view == "faq":
         template = get_template("FAQ.html")
-    elif view == "analysis":
+    elif view in ("analysis", "puzzle"):
         template = get_template("analysis.html")
     elif view == "embed":
         template = get_template("embed.html")
@@ -394,7 +404,11 @@ async def index(request):
         "tournamentdirector": user.username in TOURNAMENT_DIRECTORS,
     }
 
-    if view in ("profile", "level8win"):
+    if view == "lobby":
+        puzzle = await get_daily_puzzle(request)
+        render["puzzle"] = json.dumps(puzzle, default=datetime.isoformat)
+
+    elif view in ("profile", "level8win"):
         if view == "level8win":
             profileId = "Fairy-Stockfish"
             render["trophies"] = []
@@ -481,6 +495,43 @@ async def index(request):
         render["time_control_str"] = time_control_str
         render["tables"] = await get_latest_tournaments(request.app, lang)
         render["td"] = user.username in TOURNAMENT_DIRECTORS
+
+    elif view == "puzzle":
+        if request.path.endswith("/daily"):
+            puzzle = await get_daily_puzzle(request)
+        else:
+            puzzleId = request.match_info.get("puzzleId")
+
+            if puzzleId in VARIANTS:
+                user.puzzle_variant = puzzleId
+                puzzleId = None
+            elif variant in VARIANTS:
+                user.puzzle_variant = variant
+            else:
+                user.puzzle_variant = None
+
+            if puzzleId is None:
+                puzzle = await next_puzzle(request, user)
+            else:
+                puzzle = await get_puzzle(request, puzzleId)
+
+        color = puzzle["fen"].split()[1]
+        chess960 = False
+        puzzle_rating = int(round(puzzle.get("perf", DEFAULT_PERF)["gl"]["r"], 0))
+        variant = puzzle["variant"]
+        if color == "w":
+            wrating = int(round(user.get_puzzle_rating(variant, chess960).mu, 0))
+            brating = puzzle_rating
+        else:
+            brating = int(round(user.get_puzzle_rating(variant, chess960).mu, 0))
+            wrating = puzzle_rating
+
+        render["view_css"] = "analysis.css"
+        render["variant"] = variant
+        render["fen"] = puzzle["fen"]
+        render["wrating"] = wrating
+        render["brating"] = brating
+        render["puzzle"] = json.dumps(puzzle, default=datetime.isoformat)
 
     if (gameId is not None) and gameId != "variants":
         if view == "invite":

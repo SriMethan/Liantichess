@@ -173,12 +173,14 @@ VARIANT_ICONS = {
     "atomic": "~",
     "atomic960": "\\",
     "shinobi": "🐢",
+    "shinobiplus": "🐢",
     "empire": "♚",
 #    "ordamirror": "◩",
     "asean": "♻",
     "chak": "🐬",
     "chennis": "🎾",
     "duck": "🦆",
+    "spartan": "⍺",
 }
 
 VARIANT_960_TO_PGN = {
@@ -275,7 +277,17 @@ CATEGORIES = {
         "shogun",
         "hoppelpoppel",
     ),
-    "army": ("orda", "synochess", "shinobi", "empire", "ordamirror", "chak", "chennis"),
+    "army": (
+        "orda",
+        "synochess",
+        "shinobi",
+        "empire",
+        "ordamirror",
+        "chak",
+        "chennis",
+        "shinobiplus",
+        "spartan",
+    ),
     "makruk": ("makruk", "makpong", "cambodian", "sittuyin", "asean"),
     "shogi": (
         "shogi",
@@ -439,10 +451,12 @@ TRANSLATED_VARIANT_NAMES = {
     "orda": _("Orda Chess"),
     "synochess": _("Synochess"),
     "shinobi": _("Shinobi"),
+    "shinobiplus": _("Shinobi+"),
     "empire": _("Empire"),
     "ordamirror": _("Orda Mirror"),
     "chak": _("Chak"),
     "chennis": _("Chennis"),
+    "spartan": _("Spartan"),
 }
 
 del _

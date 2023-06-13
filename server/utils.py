@@ -13,7 +13,7 @@ except ImportError:
     print("No pyffish module installed!")
 
 from glicko2.glicko2 import gl2
-from broadcast import round_broadcast
+from broadcast import lobby_broadcast, round_broadcast
 from const import (
     STARTED,
     VARIANT_960_TO_PGN,
@@ -552,6 +552,8 @@ async def insert_game_to_db(game, app):
         log.error("db insert game result %s failed !!!", game.id)
 
     app["tv"] = game.id
+    await lobby_broadcast(app["lobbysockets"], game.tv_game_json)
+
     game.wplayer.tv = game.id
     game.bplayer.tv = game.id
 
@@ -652,7 +654,7 @@ async def play_move(app, user, game, move, clocks=None, ply=None):
                     "type": "gameEnd",
                     "status": game.status,
                     "result": game.result,
-                    "gameId": game.id,
+                    "gameId": gameId,
                     "pgn": game.pgn,
                 }
                 await opp_ws.send_json(response)
@@ -669,12 +671,10 @@ async def play_move(app, user, game, move, clocks=None, ply=None):
                 and tournament.status == T_STARTED
                 and tournament.top_game.id == gameId
             ):
-                # no need to send lots of data to tournament top game
-                del board_response["pgn"]
-                del board_response["uci_usi"]
-                del board_response["ct"]
-
                 await tournament.broadcast(board_response)
+
+        if app["tv"] == gameId:
+            await lobby_broadcast(app["lobbysockets"], board_response)
 
 
 def pgn(doc):
@@ -845,7 +845,12 @@ def sanitize_fen(variant, initial_fen, chess960):
     # Number of kings
     bking = "l" if variant == "dobutsu" else "k"
     wking = "L" if variant == "dobutsu" else "K"
-    invalid5 = init[0].count(bking) != 1 or init[0].count(wking) != 1
+    bK = init[0].count(bking)
+    wK = init[0].count(wking)
+    if variant == "spartan":
+        invalid5 = bK == 0 or bK > 2 or wK != 1
+    else:
+        invalid5 = bK != 1 or wK != 1
 
     # Opp king already in check
     invalid6 = False

@@ -48,7 +48,7 @@ export const PIECE_FAMILIES: Record<string, PieceFamily> = {
     kyoto: { pieceCSS: ["kyoto", "kyotok", "kyotoks", "kyotoi", "kyotod", "disguised"] },
     dobutsu: { pieceCSS: ["dobutsu", "disguised"] },
     tori: { pieceCSS: ["torii", "torik", "torim", "porti", "disguised"] },
-    xiangqi: { pieceCSS: ["xiangqi2d", "xiangqi2di", "xiangqi", "xiangqict3", "xiangqihnz", "xiangqict2", "xiangqihnzw", "xiangqict2w", "xiangqiwikim", "xiangqiKa", "xiangqittxqhnz", "xiangqittxqintl", "disguised"] },
+    xiangqi: { pieceCSS: ["xiangqi2d", "xiangqi2di", "xiangqi", "xiangqict3", "xiangqihnz", "xiangqict2", "xiangqihnzw", "xiangqict2w", "xiangqiwikim", "xiangqiKa", "xiangqittxqhnz", "xiangqittxqintl", "disguised", "euro"] },
     janggi: { pieceCSS: ["janggihb", "janggihg", "janggiikak", "janggiikaw", "janggikak", "janggikaw", "janggiib", "janggiig", "disguised"] },
     shako: { pieceCSS: ["shako0", "shako1", "shako2", "disguised"] },
     shogun: { pieceCSS: ["shogun0", "shogun1", "shogun2", "shogun3", "shogun4", "shogun5", "disguised"] },
@@ -60,6 +60,7 @@ export const PIECE_FAMILIES: Record<string, PieceFamily> = {
     ordamirror: { pieceCSS: ["ordamirror0", "ordamirror1", "disguised"] },
     chak: { pieceCSS: ["chak0", "disguised"] },
     chennis: { pieceCSS: ["chennis0", "chennis1", "chennis2", "disguised"] },
+    spartan: { pieceCSS: ["spartan0", "disguised"] },
 };
 
 export interface Variant {
@@ -352,6 +353,22 @@ export const variants = Object.keys(VARIANTS);
 const disabledVariants = [ "gothic", "gothhouse", "embassy", "embassyhouse", "gorogoro" ];
 export const enabledVariants = variants.filter(v => !disabledVariants.includes(v));
 
+// variants having 0 puzzle so far
+export const noPuzzleVariants = [
+    "placement",
+    "sittuyin",
+    "minishogi",
+    "kyotoshogi",
+    "gorogoroplus",
+    "torishogi",
+    "manchu",
+    "minixiangqi",
+    "grandhouse",
+    "shouse",
+    "shinobi",
+    "shinobiplus",
+]
+
 export const variantGroups: { [ key: string ]: { variants: string[] } } = {
     standard: { variants: [ "antichess", "losers", "antihouse", "coffeerace", "anti_antichess", "antiatomic" ] },
 //    sea:      { variants: [ "makruk", "makpong", "cambodian", "sittuyin", "asean" ] },
@@ -373,7 +390,7 @@ function variantGroupLabel(group: string): string {
     return groups[group];
 }
 
-export function selectVariant(id: string, selected: string, onChange: EventListener, hookInsert: InsertHook): VNode {
+export function selectVariant(id: string, selected: string, onChange: EventListener, hookInsert: InsertHook, disableds: string[] = []): VNode {
     return h('select#' + id, {
         props: { name: id },
         on: { change: onChange },
@@ -385,7 +402,7 @@ export function selectVariant(id: string, selected: string, onChange: EventListe
                 const variant = VARIANTS[v];
                 return h('option', {
                     props: { value: v, title: variant.tooltip },
-                    attrs: { selected: v === selected },
+                    attrs: { selected: v === selected, disabled: disableds.includes(variant.name) },
                 }, variant.displayName(false));
             }));
         }),
