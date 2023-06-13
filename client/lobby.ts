@@ -961,19 +961,8 @@ export function lobbyView(model: PyChessModel): VNode[] {
                 h('div#seeks-wrapper', h('table#seeks', { hook: { insert: vnode => runSeeks(vnode, model) } })),
             ]),
         ]),
-<<<<<<< HEAD
         //h('div#variants-catalog'),
         h('aside.sidebar-second', [ h('div#seekbuttons') ]),
-=======
-        h('div#variants-catalog'),
-        h('aside.sidebar-second', [
-            h('div#seekbuttons'),
-            h('div.lobby-count', [
-                h('a', { attrs: { href: '/players' } }, [ h('counter#u_cnt') ]),
-                h('a', { attrs: { href: '/games' } }, [ h('counter#g_cnt') ]),
-            ]),
-        ]),
->>>>>>> 390c44bafd680835252e248a9998ae40e629576e
         h('under-left', [
             h('a.reflist', { attrs: { href: 'https://discord.gg/5qvjPQstKS' } }, 'Discord'),
             h('a.reflist', { attrs: { href: 'https://github.com/SriMethan/Liantichess' } }, 'Github'),
@@ -984,30 +973,9 @@ export function lobbyView(model: PyChessModel): VNode[] {
         h('div.tv', [h('a#tv-game', { attrs: {href: '/tv'} })]),
         h('under-lobby', [
             h('posts', [
-<<<<<<< HEAD
                 // TODO: create news documents in mongodb and load latest 3 dinamically here
                 h('a.post', { attrs: {href: '/news/cmon'} }, [
                     h('img', { attrs: {src: model["assetURL"] + '/images/cmon.jpg'} }),
-=======
-                h('a.post', { attrs: {href: '/news/Summer_Update'} }, [
-                    h('img', { attrs: {src: model.assetURL + '/images/puzzles.jpg'} }),
-                    h('span.text', [
-                        h('strong', _("Summer Update")),
-                        h('span', _('New features and bug fixes')),
-                    ]),
-                    h('time', '2023.06.06'),
-                ]),
-                h('a.post', { attrs: {href: '/news/Spartan_Chess'} }, [
-                    h('img', { attrs: {src: model.assetURL + '/images/spartan-kick.jpg'} }),
-                    h('span.text', [
-                        h('strong', _("Madness? This. Is. SPARTAN CHESS!")),
-                        h('span', _('Spartan chess has arrived')),
-                    ]),
-                    h('time', '2023.04.01'),
-                ]),
-                h('a.post', { attrs: {href: '/news/Duck_Chess'} }, [
-                    h('img', { attrs: {src: model.assetURL + '/images/Duck.jpg'} }),
->>>>>>> 390c44bafd680835252e248a9998ae40e629576e
                     h('span.text', [
                         h('strong', "Come on we need your support!"),
                         h('span', 'We need Losers Chess & Losers Chess 960 Players!'),
