@@ -61,6 +61,7 @@ from puzzle import (
     get_puzzle,
     next_puzzle,
     get_daily_puzzle,
+    default_puzzle_perf,
 )
 from custom_trophy_owners import CUSTOM_TROPHY_OWNERS
 
@@ -140,7 +141,7 @@ async def index(request):
         users[user.username] = user
         session["user_name"] = user.username
 
-    lang = session.get("lang")
+    lang = session.get("lang") if user.lang is None else user.lang
     if lang is None:
         lang = detect_locale(request)
 
@@ -387,6 +388,7 @@ async def index(request):
         "app_name": "PyChess",
         "languages": LANGUAGES,
         "lang": lang,
+        "theme": user.theme,
         "title": page_title,
         "view": view,
         "asseturl": STATIC_ROOT,
@@ -514,10 +516,13 @@ async def index(request):
                 puzzle = await next_puzzle(request, user)
             else:
                 puzzle = await get_puzzle(request, puzzleId)
+                if puzzle is None:
+                    raise web.HTTPNotFound()
 
         color = puzzle["fen"].split()[1]
         chess960 = False
-        puzzle_rating = int(round(puzzle.get("perf", DEFAULT_PERF)["gl"]["r"], 0))
+        dafault_perf = default_puzzle_perf(puzzle["eval"])
+        puzzle_rating = int(round(puzzle.get("perf", dafault_perf)["gl"]["r"], 0))
         variant = puzzle["variant"]
         if color == "w":
             wrating = int(round(user.get_puzzle_rating(variant, chess960).mu, 0))

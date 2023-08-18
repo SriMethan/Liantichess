@@ -107,7 +107,10 @@ class Scheduler:
         for i, v in enumerate(MONTHLY_VARIANTS):
             is_960 = v.endswith("960")
             base, inc, byo = TC_MONTHLY_VARIANTS[v]
-            date = dt.datetime(self.now.year, self.now.month, i + 1, tzinfo=dt.timezone.utc)
+            try:
+                date = dt.datetime(self.now.year, self.now.month, i + 1, tzinfo=dt.timezone.utc)
+            except ValueError:
+                break
             plans.append(Plan(MONTHLY, date, 16, v.rstrip("960"), is_960, base, inc, byo, 90))
 
         plans += [

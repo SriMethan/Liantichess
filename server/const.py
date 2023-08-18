@@ -179,8 +179,13 @@ VARIANT_ICONS = {
     "asean": "♻",
     "chak": "🐬",
     "chennis": "🎾",
+    "mansindam": "⛵",
     "duck": "🦆",
     "spartan": "⍺",
+    "kingofthehill": "🏴",
+    "kingofthehill960": "🏁",
+    "3check": "☰",
+    "3check960": "☷",
 }
 
 VARIANT_960_TO_PGN = {
@@ -229,6 +234,10 @@ CATEGORIES = {
         "placement",
         "atomic",
         "atomic960",
+        "kingofthehill",
+        "kingofthehill960",
+        "3check",
+        "3check960",
         "duck",
         "antichess",
         "antichess960",
@@ -276,6 +285,7 @@ CATEGORIES = {
         "shako",
         "shogun",
         "hoppelpoppel",
+        "mansindam",
     ),
     "army": (
         "orda",
@@ -378,6 +388,10 @@ def variant_display_name(variant):
         return "TORI SHOGI"
     elif variant == "duck":
         return "DUCK CHESS"
+    elif variant == "kingofthehill":
+        return "KING OF THE HILL"
+    elif variant == "3check":
+        return " THREE-CHECK"
     else:
         return variant.upper()
 
@@ -457,6 +471,11 @@ TRANSLATED_VARIANT_NAMES = {
     "chak": _("Chak"),
     "chennis": _("Chennis"),
     "spartan": _("Spartan"),
+    "kingofthehill": _("King of the Hill"),
+    "kingofthehill960": _("King of the Hill 960"),
+    "3check": _("Three check"),
+    "3check960": _("Three check 960"),
+    "mansindam": _("Mansindam"),
 }
 
 del _

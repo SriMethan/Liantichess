@@ -143,6 +143,7 @@ class Game:
 
         self.id = gameId
 
+        self.has_counting = self.variant in ("makruk", "makpong", "cambodian", "sittuyin", "asean")
         # Makruk manual counting
         use_manual_counting = self.variant in ("makruk", "makpong", "cambodian")
         self.manual_count = use_manual_counting and not self.bot_game
@@ -675,7 +676,7 @@ class Game:
                 self.result = result_string_from_value(self.board.color, game_result_value)
                 self.status = CLAIM if game_result_value != 0 else DRAW
 
-        if self.variant in ("makruk", "makpong", "cambodian", "sittuyin", "asean"):
+        if self.has_counting:
             parts = self.board.fen.split()
             if parts[3].isdigit():
                 counting_limit = int(parts[3])
@@ -970,3 +971,19 @@ class Game:
             "byoyomi": self.byoyomi_period,
             "lastMove": self.lastmove,
         }
+
+    def takeback(self):
+        if self.bot_game and self.board.ply >= 2:
+            cur_player = self.bplayer if self.board.color == BLACK else self.wplayer
+
+            self.board.pop()
+            self.ply_clocks.pop()
+            self.steps.pop()
+
+            if not cur_player.bot:
+                self.board.pop()
+                self.ply_clocks.pop()
+                self.steps.pop()
+
+            self.legal_moves = self.board.legal_moves()
+            self.lastmove = self.board.move_stack[-1] if self.board.move_stack else None
