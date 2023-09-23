@@ -62,7 +62,7 @@ export const PIECE_FAMILIES: Record<string, PieceFamily> = {
     chak: { pieceCSS: ["chak0", "disguised"] },
     chennis: { pieceCSS: ["chennis0", "chennis1", "chennis2", "chennis3", "chennis4", "disguised"] },
     spartan: { pieceCSS: ["spartan0", "disguised"] },
-    mansindam: { pieceCSS: ["mansindam2", "mansindam1", "mansindam3", "disguised"] },
+    mansindam: { pieceCSS: ["mansindam2", "mansindam1", "mansindam3", "mansindam4", "disguised"] },
 };
 
 export interface Variant {
@@ -106,6 +106,7 @@ export interface Variant {
         readonly duck: boolean;
         readonly pass: boolean;
         readonly setup: boolean;
+        readonly noDrawOffer: boolean;
     };
     readonly material: {
         readonly showDiff: boolean;
@@ -171,6 +172,7 @@ function variant(config: VariantConfig): Variant {
             duck: !!config.rules?.duck,
             pass: !!config.rules?.pass,
             setup: !!config.rules?.setup,
+            noDrawOffer: !!config.rules?.noDrawOffer,
         },
         material: {
             showDiff: !config.pocket?.captureToHand,
@@ -258,6 +260,8 @@ interface VariantConfig {
         pass?: boolean;
         // Setup phase
         setup?: boolean;
+        // Draw offer not allowed
+        noDrawOffer?: boolean;
     };
     // Material equivalences for material diff calculation
     // ex. { 'pl-piece': 'r-piece' } means the "+L" piece is treated as the "R" piece for material diff
@@ -361,12 +365,10 @@ export const noPuzzleVariants = [
     "placement",
     "sittuyin",
     "minishogi",
-    "kyotoshogi",
     "gorogoroplus",
     "manchu",
     "minixiangqi",
     "grandhouse",
-    "mansindam",
     "shinobi",
     "shinobiplus",
 ]
