@@ -3,6 +3,7 @@
 
 Liantichess is a free, open-source antichess variants server designed to play antichess and antichess variants.
 
+
 All supported games on Liantichess can be seen [here](https://liantichess.herokuapp.com/variants)
 
 For move generation, validation, analysis and engine play it uses
