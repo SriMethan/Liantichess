@@ -75,7 +75,7 @@ from scheduler import (
     MONTHLY_VARIANTS,
     WEEKLY_VARIANTS,
     PAUSED_MONTHLY_VARIANTS,
-    #SEATURDAY,
+    COFFEEDAY,
     SHIELDS,
 )
 from videos import VIDEOS
@@ -290,7 +290,7 @@ async def init_state(app):
         for variant in VARIANTS:
             if (
                 variant in MONTHLY_VARIANTS
-                #or variant in SEATURDAY
+                or variant in COFFEEDAY
                 or variant in PAUSED_MONTHLY_VARIANTS
             ):
                 tname = translated_tournament_name(variant, MONTHLY, ARENA, translation)
