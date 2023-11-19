@@ -75,7 +75,7 @@ from scheduler import (
     MONTHLY_VARIANTS,
     WEEKLY_VARIANTS,
     PAUSED_MONTHLY_VARIANTS,
-    SEATURDAY,
+    #SEATURDAY,
     SHIELDS,
 )
 from videos import VIDEOS
