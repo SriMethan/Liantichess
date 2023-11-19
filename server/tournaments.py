@@ -285,7 +285,7 @@ async def get_latest_tournaments(app, lang):
             tournament.nb_players = doc["nbPlayers"]
 
         if tournament.frequency:
-            tournament.translated_name = app["tourneynames"][lang][
+            tournament = app["tourneynames"][lang][
                 (
                     tournament.variant + ("960" if tournament.chess960 else ""),
                     tournament.frequency,
@@ -293,7 +293,7 @@ async def get_latest_tournaments(app, lang):
                 )
             ]
         else:
-            tournament.translated_name = tournament.name
+            tournament = tournament.name
 
         if doc["status"] == T_STARTED:
             started.append(tournament)
