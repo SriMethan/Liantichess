@@ -575,6 +575,10 @@ a.news {
   margin-right: 0.4em;
 }
 posts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  grid-gap: 1em;
+  grid-template-rows: auto;
   font-size: 0.9em;
   line-height: 1.5;
 }

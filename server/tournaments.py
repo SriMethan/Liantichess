@@ -149,7 +149,7 @@ async def upsert_tournament_to_db(tournament, app):
     new_data = {
         "name": tournament.name,
         "d": tournament.description,
-        #"fr": tournament.frequency,
+        "fr": tournament.frequency,
         "minutes": tournament.minutes,
         "v": V2C[tournament.variant],
         "b": tournament.base,
@@ -284,14 +284,16 @@ async def get_latest_tournaments(app, lang):
             )
             tournament.nb_players = doc["nbPlayers"]
 
-        #if tournament.frequency:
-            #tournament.name = app["tourneynames"][lang][
-                #(
-                   # tournament.variant + ("960" if tournament.chess960 else ""),
-                    #tournament.frequency,
-                    #tournament.system,
-                #)
-           # ]
+        if tournament.frequency:
+            tournament.translated_name = app["tourneynames"][lang][
+                (
+                    tournament.variant + ("960" if tournament.chess960 else ""),
+                    tournament.frequency,
+                    tournament.system,
+                )
+            ]
+        else:
+            tournament.translated_name = tournament.name
 
         if doc["status"] == T_STARTED:
             started.append(tournament)
@@ -327,7 +329,6 @@ async def get_tournament_name(request, tournament_id):
 
     if tournament_id in tournaments:
         tournament = tournaments[tournament_id]
-        """
         if tournament.frequency:
             name = request.app["tourneynames"][lang][
                 (
@@ -355,10 +356,9 @@ async def get_tournament_name(request, tournament_id):
             else:
                 name = doc["name"]
         request.app["tourneynames"][lang][tournament_id] = name
-        """
+
     return name
 
-    
 
 async def load_tournament(app, tournament_id, tournament_klass=None):
     """Return Tournament object from app cache or from database"""

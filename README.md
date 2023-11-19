@@ -1,5 +1,5 @@
 # [LiAntichess](https://liantichess.herokuapp.com)
-[![Liantichess](https://img.shields.io/badge/Liantichess-%40players-yellow.svg)](https://liantichess.herokuapp.com/players)
+[![Liantichess](https://img.shields.io/badge/Liantichess-%40players-green.svg)](https://liantichess.herokuapp.com/players)
 
 Liantichess is a free, open-source antichess variants server designed to play antichess and antichess variants.
 
